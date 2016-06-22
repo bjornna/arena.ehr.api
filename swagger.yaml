@@ -10,6 +10,7 @@ paths:
     get:
       tags:
         - Archetype
+      summary: 'Get a list of all Arcehtypes in the system'
       operationId: Archetype_GetAll
       consumes: []
       produces:
@@ -54,6 +55,7 @@ paths:
     get:
       tags:
         - Archetype
+      summary: 'Get a representation of the given archetype id i.e. openEHR-EHR-OBSERVATION.blood_pressure.v1.'
       operationId: Archetype_Get
       consumes: []
       produces:
