@@ -9,7 +9,7 @@ Take a look at the content in Apiary at  http://docs.arenaehr.apiary.io/
 
 == AQL - examples 
 
-The following AQL returns the latest ten temperatures in the openEHR server. 
+The following AQL returns the latest two temperatures in the openEHR server. 
 [source]
 ----
 select   
@@ -17,7 +17,96 @@ a_a/data[at0002]/events[at0003]/time as When,
 a_a/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value as Temperature 
 from EHR e contains COMPOSITION a 	CONTAINS OBSERVATION a_a[openEHR-EHR-OBSERVATION.body_temperature.v1] 
 order by a_a/data[at0002]/events[at0003]/time desc 	
-offset 0 limit 10
+offset 0 limit 2
+----
+
+The result from such a query will look like this: 
+
+[source, xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<!--DIPS.OpenEhr.ResultSets.Serialization.Xml.ResultSetXmlWriter (5.0.0.0)-->
+<resultSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.openehr.org/v1">
+  <correlationid>00000000-0000-0000-0000-000000000000</correlationid>
+  <totalResults>2</totalResults>
+  <columns>
+    <name>When</name>
+    <path>/data[at0002]/events[at0003]/time</path>
+  </columns>
+  <columns>
+    <name>Temperature</name>
+    <path>/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value</path>
+  </columns>
+  <rows>
+    <row>
+      <items xsi:type="DV_DATE_TIME">
+        <value>2016-06-08T11:02:47+02:00</value>
+      </items>
+      <items xsi:type="DV_QUANTITY">
+        <magnitude>38</magnitude>
+        <units>°C</units>
+      </items>
+    </row>
+    <row>
+      <items xsi:type="DV_DATE_TIME">
+        <value>2016-06-05T08:53:36+02:00</value>
+      </items>
+      <items xsi:type="DV_QUANTITY">
+        <magnitude>37</magnitude>
+        <units>Cel</units>
+      </items>
+    </row>
+  </rows>
+  <tags />
+</resultSet>
+----
+
+[source, json]
+----
+{
+  "@class": "RESULTSET",
+  "@schemaversion": "0.1.0",
+  "@type": "raw",
+  "@created": "2016-06-22T07:54:04.758+02:00",
+  "@generator": "DIPS.OpenEhr.ResultSets.Serialization.Json.ResultSetJsonWriter (5.0.0.0)",
+  "name": null,
+  "correlationid": "00000000-0000-0000-0000-000000000000",
+  "totalResults": 2,
+  "columns": [
+    {
+      "name": "When",
+      "path": "/data[at0002]/events[at0003]/time"
+    },
+    {
+      "name": "Temperature",
+      "path": "/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value"
+    }
+  ],
+  "rows": [
+    [
+      {
+        "@class": "DV_DATE_TIME",
+        "value": "2016-06-08T11:02:47+02:00"
+      },
+      {
+        "@class": "DV_QUANTITY",
+        "magnitude": 38.0,
+        "units": "°C"
+      }
+    ],
+    [
+      {
+        "@class": "DV_DATE_TIME",
+        "value": "2016-06-05T08:53:36+02:00"
+      },
+      {
+        "@class": "DV_QUANTITY",
+        "magnitude": 37.0,
+        "units": "Cel"
+      }
+    ]
+  ]
+}
 ----
 
 == Some resources
