@@ -59,8 +59,6 @@ paths:
       produces:
         - application/xml
         - text/xml
-        - application/json
-        - text/json
         - application/vnd.dips.openehr+xml
       parameters:
         - name: id
