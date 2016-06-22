@@ -7,6 +7,18 @@ This repositotry contains the API definition (swagger.yaml). The API is autogene
 
 Take a look at the content in Apiary at  http://docs.arenaehr.apiary.io/
 
+== AQL - examples 
+
+The following AQL returns the latest ten temperatures in the openEHR server. 
+[source]
+----
+select   
+a_a/data[at0002]/events[at0003]/time as When,
+a_a/data[at0002]/events[at0003]/data[at0001]/items[at0004]/value as Temperature 
+from EHR e contains COMPOSITION a 	CONTAINS OBSERVATION a_a[openEHR-EHR-OBSERVATION.body_temperature.v1] 
+order by a_a/data[at0002]/events[at0003]/time desc 	
+offset 0 limit 10
+----
 
 == Some resources
 
