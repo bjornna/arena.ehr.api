@@ -1178,36 +1178,6 @@ paths:
           schema:
             $ref: '#/definitions/ValidationResult'
       deprecated: false
-  /api/v1/query/autocomplete:
-    post:
-      tags:
-        - Query
-      operationId: Query_Post
-      consumes:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/x-www-form-urlencoded
-      produces:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-      parameters:
-        - name: request
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/AqlAutocompleteRequest'
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              type: string
-      deprecated: false
   /api/v1/query/vaqm:
     post:
       tags:
