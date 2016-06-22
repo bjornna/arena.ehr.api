@@ -1,0 +1,3564 @@
+swagger: '2.0'
+info:
+  version: v1
+  title: Arena EHR Server API Documentation
+host: 'arenaehr.dips.no:9000'
+schemes:
+  - http
+paths:
+  /api/v1/archetype:
+    get:
+      tags:
+        - Archetype
+      operationId: Archetype_GetAll
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ArchetypeInfo'
+      deprecated: false
+    post:
+      tags:
+        - Archetype
+      operationId: Archetype_Save
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateArchetypeRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/archetype/{id}':
+    get:
+      tags:
+        - Archetype
+      operationId: Archetype_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr+xml
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Archetype'
+      deprecated: false
+  /api/v1/archetype/upload:
+    post:
+      tags:
+        - Archetype
+      operationId: Archetype_Upload
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/cds/{ehrId}/{guideId}':
+    get:
+      tags:
+        - Cds
+      operationId: Cds_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: ehrId
+          in: path
+          required: true
+          type: string
+        - name: guideId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/cds:
+    post:
+      tags:
+        - Cds
+      operationId: Cds_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ScopedGdlRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/composition/{compositionUid}':
+    get:
+      tags:
+        - Composition
+      summary: Gets the composition with specified UID.
+      operationId: Composition_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr+xml
+      parameters:
+        - name: compositionUid
+          in: path
+          description: The Composition UID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK.
+          schema:
+            $ref: '#/definitions/Composition'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '404':
+          description: Not found.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{ehrId}/composition':
+    post:
+      tags:
+        - Composition
+      summary: Create a new composition.
+      operationId: Composition_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.openehr+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: composition
+          in: body
+          description: The composition.
+          required: true
+          schema:
+            $ref: '#/definitions/Composition'
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          required: true
+          type: integer
+          format: int32
+        - name: ehrId
+          in: path
+          description: The ehr Id.
+          required: true
+          type: string
+        - name: precedingVersionUid
+          in: query
+          description: This will result in a new composition based on the preceding composition version.
+          required: false
+          type: string
+      responses:
+        '201':
+          description: Created - The composition was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{subjectNamespace}/{subjectId}/composition':
+    post:
+      tags:
+        - Composition
+      summary: Create a new composition.
+      operationId: Composition_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.openehr+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: composition
+          in: body
+          description: The composition.
+          required: true
+          schema:
+            $ref: '#/definitions/Composition'
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          required: true
+          type: integer
+          format: int32
+        - name: subjectId
+          in: path
+          description: The subject id.
+          required: true
+          type: string
+        - name: subjectNamespace
+          in: path
+          description: The subject namespace.
+          required: true
+          type: string
+        - name: precedingVersionUid
+          in: query
+          description: This will result in a new composition based on the preceding composition version.
+          required: false
+          type: string
+      responses:
+        '201':
+          description: Created - The composition was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{ehrId}/bulk/composition':
+    post:
+      tags:
+        - Composition
+      summary: Create a new composition.
+      operationId: Composition_PostBulk
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.openehr+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: composition
+          in: body
+          description: The composition.
+          required: true
+          schema:
+            $ref: '#/definitions/Composition'
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          required: true
+          type: integer
+          format: int32
+        - name: ehrId
+          in: path
+          description: The ehr Id.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Created - The composition was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{subjectNamespace}/{subjectId}/bulk/composition':
+    post:
+      tags:
+        - Composition
+      summary: Create a new composition.
+      operationId: Composition_PostBulk
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.openehr+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: composition
+          in: body
+          description: The composition.
+          required: true
+          schema:
+            $ref: '#/definitions/Composition'
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          required: true
+          type: integer
+          format: int32
+        - name: subjectId
+          in: path
+          description: The subject id.
+          required: true
+          type: string
+        - name: subjectNamespace
+          in: path
+          description: The subject namespace.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Created - The composition was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{subjectNamespace}/{subjectId}/composition/flat':
+    post:
+      tags:
+        - Composition
+      summary: Create a new composition.
+      operationId: Composition_PostFlat
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: flatComposition
+          in: body
+          description: The composition.
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/definitions/Object'
+            example:
+              /context/start_time/value: '2016-06-22T05:08:52.0424687+02:00'
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/magnitude": 120
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/units": 'mm[Hg]'
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/magnitude": 80
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/units": 'mm[Hg]'
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0033]/value/value": comment here...
+        - name: templateId
+          in: query
+          description: The template id.
+          required: true
+          type: string
+        - name: committerName
+          in: query
+          description: The committer Name.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          required: true
+          type: integer
+          format: int32
+        - name: subjectId
+          in: path
+          description: The subject id.
+          required: true
+          type: string
+        - name: subjectNamespace
+          in: path
+          description: The subject namespace.
+          required: true
+          type: string
+        - name: precedingVersionUid
+          in: query
+          description: This will result in a new composition based on the preceding composition version.
+          required: false
+          type: string
+      responses:
+        '201':
+          description: Created - The composition was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{ehrId}/composition/flat':
+    post:
+      tags:
+        - Composition
+      summary: Create a new composition.
+      operationId: Composition_PostFlat
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: flatComposition
+          in: body
+          description: The composition.
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/definitions/Object'
+            example:
+              /context/start_time/value: '2016-06-22T05:08:52.0424687+02:00'
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/magnitude": 120
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/units": 'mm[Hg]'
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/magnitude": 80
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/units": 'mm[Hg]'
+              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0033]/value/value": comment here...
+        - name: templateId
+          in: query
+          description: The template id.
+          required: true
+          type: string
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          required: true
+          type: integer
+          format: int32
+        - name: ehrId
+          in: path
+          description: The ehr Id.
+          required: true
+          type: string
+        - name: precedingVersionUid
+          in: query
+          description: This will result in a new composition based on the preceding composition version.
+          required: false
+          type: string
+      responses:
+        '201':
+          description: Created - The composition was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/composition/{versionedCompositionUid}/delete':
+    post:
+      tags:
+        - Composition
+      summary: Creates a new version with version lifecycle state = 523 (deleted).
+      operationId: Composition_Delete
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: versionedCompositionUid
+          in: path
+          description: The UID of the composition to be deleted.
+          required: true
+          type: string
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Created - The composition was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  /api/v1/ehr:
+    get:
+      tags:
+        - Ehr
+      summary: Returns the state of the specified EHR.
+      operationId: Ehr_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr+xml
+      parameters:
+        - name: subjectId
+          in: query
+          description: The subject ID whose EHR needs to be located.
+          required: true
+          type: string
+        - name: subjectNamespace
+          in: query
+          description: The namespace that the subject belongs to.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PatientEhr'
+      deprecated: false
+    post:
+      tags:
+        - Ehr
+      summary: "Creates a new EHR and returns its ID.\r\n                The caller can specify an external subject ID and namespace to whom the new EHR will belong."
+      operationId: Ehr_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          description: The request message.
+          required: true
+          schema:
+            $ref: '#/definitions/CreateEhrRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+      deprecated: false
+  '/api/v1/form/{name}/{version}':
+    get:
+      tags:
+        - Form
+      operationId: Form_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+    delete:
+      tags:
+        - Form
+      operationId: Form_Delete
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/form/{name}/{version}/resource/{resourceName}':
+    get:
+      tags:
+        - Form
+      operationId: Form_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+        - name: resourceName
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/form:
+    get:
+      tags:
+        - Form
+      operationId: Form_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ServerFormInfo'
+      deprecated: false
+    post:
+      tags:
+        - Form
+      operationId: Form_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: form
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Form'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/form/{status}':
+    get:
+      tags:
+        - Form
+      operationId: Form_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: status
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/form/upload:
+    post:
+      tags:
+        - Form
+      operationId: Form_Upload
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/gdl:
+    get:
+      tags:
+        - Gdl
+      operationId: Gdl_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+    post:
+      tags:
+        - Gdl
+      operationId: Gdl_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: command
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Command'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/gdl/{guideId}':
+    get:
+      tags:
+        - Gdl
+      operationId: Gdl_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: guideId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/gdl/upload:
+    post:
+      tags:
+        - Gdl
+      operationId: Gdl_Upload
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/Link:
+    get:
+      tags:
+        - Link
+      summary: Returns items by ehr uri (only relative ehr uri is supported.)
+      operationId: Link_GetByUri
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr+xml
+      parameters:
+        - name: ehruri
+          in: query
+          description: "ehr://top_level_structure_locator/path_inside_top_level_structure. \r\n            Ex. ehr:compositions/87284370-2D4B-4e3d-A3F3-F303D2F4F34B/content[openEHR-EHR-SECTION.vital_signs.v1]/items[openEHR-EHR-OBSERVATION.blood_pressure.v1]/data/events[at0006, 'any event']/data/items[at0004]"
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RmType'
+        '404':
+          description: Not Found
+      deprecated: false
+  /api/v1/query:
+    get:
+      tags:
+        - Query
+      summary: 'Execute AQL query with the given AQL string '
+      operationId: Query_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: aql
+          in: query
+          description: The AQL query to execute.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResultSet'
+      deprecated: false
+    post:
+      tags:
+        - Query
+      summary: 'Returns the data produced by the specified query, along with some meta-data.'
+      operationId: Query_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: request
+          in: body
+          description: QueryRequest containing query and optional scope of query.
+          required: true
+          schema:
+            $ref: '#/definitions/ScopedQueryMessage'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResultSet'
+      deprecated: false
+  /api/v1/queries:
+    post:
+      tags:
+        - Query
+      operationId: Query_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultsets+xml
+      parameters:
+        - name: messages
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ScopedQueryMessage'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResultSet'
+      deprecated: false
+  '/api/v1/query/stored/{name}':
+    get:
+      tags:
+        - Query
+      summary: 'Returns the data produced by the specified stored query, along with some meta-data.'
+      operationId: Query_GetStoredQuery
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: name
+          in: path
+          description: The name of the stored query.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResultSet'
+      deprecated: false
+    post:
+      tags:
+        - Query
+      operationId: Query_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ScopedStoredQueryMessage'
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResultSet'
+      deprecated: false
+  '/api/v1/query/stored/{name}/{formatName}':
+    get:
+      tags:
+        - Query
+      summary: 'Returns the data produced by the specified stored query, along with some meta-data.'
+      operationId: Query_GetStoredQuery
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: name
+          in: path
+          description: The name of the stored query.
+          required: true
+          type: string
+        - name: formatName
+          in: path
+          description: The presentation name.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResultSet'
+      deprecated: false
+    post:
+      tags:
+        - Query
+      operationId: Query_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ScopedStoredQueryMessage'
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: formatName
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResultSet'
+      deprecated: false
+  /api/v1/query/validate:
+    post:
+      tags:
+        - Query
+      operationId: Query_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AqlValidationRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ValidationResult'
+      deprecated: false
+  /api/v1/query/autocomplete:
+    post:
+      tags:
+        - Query
+      operationId: Query_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AqlAutocompleteRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              type: string
+      deprecated: false
+  /api/v1/query/vaqm:
+    post:
+      tags:
+        - Query
+      operationId: Query_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.dataelementquery+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: dataElementQuery
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DataElementQuery'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DataElementQueryResult'
+      deprecated: false
+  /api/v1/query/doc:
+    get:
+      tags:
+        - Query
+      operationId: Query_GetQueryDoc
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+      deprecated: false
+  /api/v1/server/settings:
+    get:
+      tags:
+        - Server
+      operationId: Server_GetSettings
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/server/database_id:
+    get:
+      tags:
+        - Server
+      operationId: Server_GetDatabaseId
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/server/version:
+    get:
+      tags:
+        - Server
+      operationId: Server_GetVersion
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/server/status:
+    get:
+      tags:
+        - Server
+      operationId: Server_GetStatus
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/storedquery:
+    get:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StoredQueryModel'
+      deprecated: false
+    put:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_Put
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: storedQuery
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StoredQueryModel'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+    post:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: storedQuery
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StoredQueryModel'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/storedquery/{name}':
+    get:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StoredQueryModel'
+      deprecated: false
+    delete:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_Delete
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/{compositionUid}/tags':
+    post:
+      tags:
+        - Tags
+      summary: Updated tags on a composition.
+      operationId: Tags_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: compositionUid
+          in: path
+          description: The committer Name.
+          required: true
+          type: string
+        - name: tags
+          in: body
+          description: The composition.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TagValues'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/tag/keys:
+    get:
+      tags:
+        - Tags
+      operationId: Tags_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/template:
+    get:
+      tags:
+        - Template
+      operationId: Template_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/TemplateInfo'
+      deprecated: false
+    post:
+      tags:
+        - Template
+      operationId: Template_Post
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/template/{id}':
+    get:
+      tags:
+        - Template
+      operationId: Template_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TemplateInfo'
+      deprecated: false
+  '/api/v1/template/{templateId}':
+    get:
+      tags:
+        - Template
+      operationId: Template_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TemplateInfo'
+      deprecated: false
+  '/api/v1/template/{id}/delete':
+    put:
+      tags:
+        - Template
+      operationId: Template_Delete
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/template/{id}/undelete':
+    put:
+      tags:
+        - Template
+      operationId: Template_Undelete
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  '/api/v1/template/{templateId}/opt':
+    get:
+      tags:
+        - Template
+      operationId: Template_GetOpt
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.am+xml
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/OperationalTemplate'
+      deprecated: false
+  '/api/v1/template/{fileName}':
+    post:
+      tags:
+        - Template
+      operationId: Template_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.openehr.am+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: template
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OperationalTemplate'
+        - name: fileName
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/template/lastupdate:
+    get:
+      tags:
+        - Template
+      operationId: Template_GetLastUpdate
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/vaqm/save:
+    post:
+      tags:
+        - Vaqm
+      summary: Saves the given AqlBindings
+      operationId: Vaqm_Save
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.vaqm+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: vaqmConfiguration
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VaqmConfiguration'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/vaqm/approve:
+    post:
+      tags:
+        - Vaqm
+      summary: Approves the given AqlBindings
+      operationId: Vaqm_Approve
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.vaqm+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: vaqmConfiguration
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VaqmConfiguration'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/vaqm/delete:
+    post:
+      tags:
+        - Vaqm
+      summary: Deletes the AqlBindings with the given ids
+      operationId: Vaqm_Delete
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: deleteGuidVersions
+          in: body
+          description: 'List of AqlBinding guidversions (GUID, string) and username for the user that deleted'
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeleteGuidVersion'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Object'
+      deprecated: false
+  /api/v1/vaqm:
+    get:
+      tags:
+        - Vaqm
+      summary: "Returns the VAQM configuration for all AqlBindings (not including deleted)\r\n            Possible to return only Approved AqlBindings with given parameter."
+      operationId: Vaqm_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.vaqm+xml
+      parameters:
+        - name: includeDeleted
+          in: query
+          required: false
+          type: boolean
+        - name: onlyApproved
+          in: query
+          required: false
+          type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VaqmConfiguration'
+      deprecated: false
+  /api/v1/vaqm/aqlbinding:
+    post:
+      tags:
+        - Vaqm
+      summary: Returns the VAQM configuration for the latest saved AqlBindings with the given ids
+      operationId: Vaqm_FilterAqlBinding
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.vaqm+xml
+      parameters:
+        - name: filterScope
+          in: body
+          description: List of AqlBinding ids (GUID)
+          required: true
+          schema:
+            $ref: '#/definitions/FilterScope'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VaqmConfiguration'
+      deprecated: false
+  /api/v1/vaqm/dataelement:
+    post:
+      tags:
+        - Vaqm
+      summary: Returns the VAQM configuration for the latest saved AqlBindings with DataElement ids
+      operationId: Vaqm_FilterDataElementsLatestSavedByIds
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.vaqm+xml
+      parameters:
+        - name: filterScope
+          in: body
+          description: List of DataElement ids (GUID)
+          required: true
+          schema:
+            $ref: '#/definitions/FilterScope'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VaqmConfiguration'
+      deprecated: false
+definitions:
+  CreateArchetypeRequest:
+    type: object
+    properties:
+      adl:
+        type: string
+  Object:
+    type: object
+    properties: {}
+  ArchetypeInfo:
+    type: object
+    properties:
+      archetypeId:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      createdTime:
+        format: date-time
+        type: string
+  Archetype:
+    type: object
+    properties:
+      adlVersion:
+        type: string
+      archetypeId:
+        $ref: '#/definitions/ArchetypeId'
+      uid:
+        $ref: '#/definitions/HierObjectId'
+      concept:
+        type: string
+      parentArchetypeId:
+        $ref: '#/definitions/ArchetypeId'
+      definition:
+        $ref: '#/definitions/CComplexObject'
+      ontology:
+        $ref: '#/definitions/ArchetypeOntology'
+      invariants:
+        type: array
+        items:
+          $ref: '#/definitions/Assertion'
+        readOnly: true
+      id:
+        type: string
+      isDeleted:
+        type: boolean
+      originalLanguage:
+        $ref: '#/definitions/DvCodePhrase'
+      translations:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/TranslationDetails'
+      description:
+        $ref: '#/definitions/ResourceDescription'
+      revisionHistory:
+        $ref: '#/definitions/RevisionHistory'
+      isControlled:
+        type: boolean
+      constraint:
+        $ref: '#/definitions/CObject'
+  ArchetypeId:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  HierObjectId:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  CComplexObject:
+    type: object
+    properties:
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/CAttribute'
+        readOnly: true
+      assumedValue:
+        $ref: '#/definitions/CComplexObject'
+      anyAllowed:
+        type: boolean
+      referenceModelTypeName:
+        type: string
+      occurrences:
+        $ref: '#/definitions/Interval[Int32]'
+      nodeId:
+        type: string
+      parent:
+        $ref: '#/definitions/CAttribute'
+  ArchetypeOntology:
+    type: object
+    properties:
+      terminologyDefinitions:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ArchetypeTerminology'
+      terminologyBindings:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties:
+            $ref: '#/definitions/DvCodePhrase'
+      constraintDefinitions:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ArchetypeTerminology'
+      constraintBindings:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ArchetypeTerminology'
+      availableTerminologies:
+        type: array
+        items:
+          type: string
+      specialisationDepth:
+        format: int32
+        type: integer
+      terminologyCodes:
+        type: array
+        items:
+          type: string
+        readOnly: true
+      constraintCodes:
+        type: array
+        items:
+          type: string
+        readOnly: true
+      terminologyAttributeNames:
+        type: array
+        items:
+          type: string
+        readOnly: true
+      parentArchetype:
+        $ref: '#/definitions/Archetype'
+  Assertion:
+    type: object
+    properties:
+      tag:
+        type: string
+      expression:
+        $ref: '#/definitions/ExprItem'
+      expressionString:
+        type: string
+      variables:
+        type: array
+        items:
+          $ref: '#/definitions/AssertionVariable'
+        readOnly: true
+  DvCodePhrase:
+    type: object
+    properties:
+      codeString:
+        type: string
+      terminologyId:
+        $ref: '#/definitions/TerminologyId'
+      constraint:
+        $ref: '#/definitions/CObject'
+  TranslationDetails:
+    type: object
+    properties:
+      language:
+        $ref: '#/definitions/DvCodePhrase'
+      author:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+      accreditation:
+        type: string
+      otherDetails:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  ResourceDescription:
+    type: object
+    properties:
+      originalAuthor:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+      otherContributors:
+        type: array
+        items:
+          type: string
+        readOnly: true
+      lifecycleState:
+        type: string
+      details:
+        type: array
+        items:
+          $ref: '#/definitions/ResourceDescriptionItem'
+        readOnly: true
+      resourcePackageUri:
+        type: string
+      otherDetails:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+      parentResource:
+        $ref: '#/definitions/AuthoredResource'
+      constraint:
+        $ref: '#/definitions/CObject'
+  RevisionHistory:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/RevisionHistoryItem'
+      constraint:
+        $ref: '#/definitions/CObject'
+  CObject:
+    type: object
+    properties:
+      referenceModelTypeName:
+        type: string
+      occurrences:
+        $ref: '#/definitions/Interval[Int32]'
+      nodeId:
+        type: string
+      parent:
+        $ref: '#/definitions/CAttribute'
+  CAttribute:
+    type: object
+    properties:
+      referenceModelAttributeName:
+        type: string
+      existence:
+        $ref: '#/definitions/Interval[Int32]'
+      isMatchNegated:
+        type: boolean
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/CObject'
+        readOnly: true
+      parent:
+        $ref: '#/definitions/CObject'
+  'Interval[Int32]':
+    type: object
+    properties:
+      lower:
+        format: int32
+        type: integer
+      upper:
+        format: int32
+        type: integer
+      lowerUnbounded:
+        type: boolean
+      upperUnbounded:
+        type: boolean
+      lowerIncluded:
+        type: boolean
+      upperIncluded:
+        type: boolean
+  ArchetypeTerminology:
+    type: object
+    properties:
+      code:
+        type: string
+      items:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+  ExprItem:
+    type: object
+    properties:
+      type:
+        type: string
+  AssertionVariable:
+    type: object
+    properties:
+      name:
+        type: string
+      definition:
+        type: string
+  TerminologyId:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  ResourceDescriptionItem:
+    type: object
+    properties:
+      language:
+        $ref: '#/definitions/DvCodePhrase'
+      purpose:
+        type: string
+      keywords:
+        type: array
+        items:
+          type: string
+      use:
+        type: string
+      misuse:
+        type: string
+      copyright:
+        type: string
+      originalResourceUri:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+      otherDetails:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  AuthoredResource:
+    type: object
+    properties:
+      originalLanguage:
+        $ref: '#/definitions/DvCodePhrase'
+      translations:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/TranslationDetails'
+      description:
+        $ref: '#/definitions/ResourceDescription'
+      revisionHistory:
+        $ref: '#/definitions/RevisionHistory'
+      isControlled:
+        type: boolean
+      constraint:
+        $ref: '#/definitions/CObject'
+  RevisionHistoryItem:
+    type: object
+    properties:
+      audits:
+        type: array
+        items:
+          $ref: '#/definitions/AuditDetails'
+      versionId:
+        $ref: '#/definitions/ObjectVersionId'
+      constraint:
+        $ref: '#/definitions/CObject'
+  AuditDetails:
+    type: object
+    properties:
+      systemId:
+        type: string
+      committer:
+        $ref: '#/definitions/PartyProxy'
+      timeCommitted:
+        $ref: '#/definitions/DvDateTime'
+      changeType:
+        $ref: '#/definitions/DvCodedText'
+      description:
+        $ref: '#/definitions/DvText'
+      constraint:
+        $ref: '#/definitions/CObject'
+  ObjectVersionId:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  PartyProxy:
+    type: object
+    properties:
+      externalRef:
+        $ref: '#/definitions/PartyRef'
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvDateTime:
+    type: object
+    properties:
+      value:
+        type: string
+      magnitude:
+        format: double
+        type: number
+      asDateTime:
+        format: date-time
+        type: string
+        readOnly: true
+      accuracy:
+        $ref: '#/definitions/DvDuration'
+      magnitudeStatus:
+        type: string
+      normalStatus:
+        $ref: '#/definitions/DvCodePhrase'
+      normalRange:
+        $ref: '#/definitions/DvInterval[DvDateTime]'
+      otherReferenceRanges:
+        type: array
+        items:
+          $ref: '#/definitions/ReferenceRange[DvDateTime]'
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvCodedText:
+    type: object
+    properties:
+      definingCode:
+        $ref: '#/definitions/DvCodePhrase'
+      value:
+        type: string
+      mappings:
+        type: array
+        items:
+          $ref: '#/definitions/TerminologyMapping'
+      formatting:
+        type: string
+      hyperlink:
+        $ref: '#/definitions/DvUri'
+      language:
+        $ref: '#/definitions/DvCodePhrase'
+      encoding:
+        $ref: '#/definitions/DvCodePhrase'
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvText:
+    type: object
+    properties:
+      value:
+        type: string
+      mappings:
+        type: array
+        items:
+          $ref: '#/definitions/TerminologyMapping'
+      formatting:
+        type: string
+      hyperlink:
+        $ref: '#/definitions/DvUri'
+      language:
+        $ref: '#/definitions/DvCodePhrase'
+      encoding:
+        $ref: '#/definitions/DvCodePhrase'
+      constraint:
+        $ref: '#/definitions/CObject'
+  PartyRef:
+    type: object
+    properties:
+      type:
+        type: string
+      id:
+        $ref: '#/definitions/ObjectId'
+      namespace:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvDuration:
+    type: object
+    properties:
+      value:
+        type: string
+      magnitude:
+        format: double
+        type: number
+      accuracy:
+        format: double
+        type: number
+      isAccuracyPercent:
+        type: boolean
+      magnitudeStatus:
+        type: string
+      normalStatus:
+        $ref: '#/definitions/DvCodePhrase'
+      normalRange:
+        $ref: '#/definitions/DvInterval[DvDuration]'
+      otherReferenceRanges:
+        type: array
+        items:
+          $ref: '#/definitions/ReferenceRange[DvDuration]'
+      constraint:
+        $ref: '#/definitions/CObject'
+  'DvInterval[DvDateTime]':
+    type: object
+    properties:
+      lower:
+        $ref: '#/definitions/DvDateTime'
+      upper:
+        $ref: '#/definitions/DvDateTime'
+      isLowerUnbounded:
+        type: boolean
+        readOnly: true
+      isUpperUnbounded:
+        type: boolean
+        readOnly: true
+      isLowerIncluded:
+        type: boolean
+      isUpperIncluded:
+        type: boolean
+      constraint:
+        $ref: '#/definitions/CObject'
+  'ReferenceRange[DvDateTime]':
+    type: object
+    properties:
+      meaning:
+        $ref: '#/definitions/DvText'
+      range:
+        $ref: '#/definitions/DvInterval[DvDateTime]'
+      constraint:
+        $ref: '#/definitions/CObject'
+  TerminologyMapping:
+    type: object
+    properties:
+      target:
+        $ref: '#/definitions/DvCodePhrase'
+      match:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+        type: integer
+      purpose:
+        $ref: '#/definitions/DvCodedText'
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvUri:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  ObjectId:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  'DvInterval[DvDuration]':
+    type: object
+    properties:
+      lower:
+        $ref: '#/definitions/DvDuration'
+      upper:
+        $ref: '#/definitions/DvDuration'
+      isLowerUnbounded:
+        type: boolean
+        readOnly: true
+      isUpperUnbounded:
+        type: boolean
+        readOnly: true
+      isLowerIncluded:
+        type: boolean
+      isUpperIncluded:
+        type: boolean
+      constraint:
+        $ref: '#/definitions/CObject'
+  'ReferenceRange[DvDuration]':
+    type: object
+    properties:
+      meaning:
+        $ref: '#/definitions/DvText'
+      range:
+        $ref: '#/definitions/DvInterval[DvDuration]'
+      constraint:
+        $ref: '#/definitions/CObject'
+  ScopedGdlRequest:
+    type: object
+    properties:
+      guideId:
+        type: string
+      ehrIds:
+        type: array
+        items:
+          type: string
+      tagScope:
+        $ref: '#/definitions/TagScope'
+      partitionBy:
+        $ref: '#/definitions/TagPartitionBy'
+  TagScope:
+    type: object
+    properties:
+      tags:
+        type: array
+        items:
+          $ref: '#/definitions/TagValues'
+  TagPartitionBy:
+    type: object
+    properties:
+      tag:
+        type: string
+      limit:
+        format: int32
+        type: integer
+  TagValues:
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          type: string
+      tag:
+        type: string
+  Composition:
+    type: object
+    properties:
+      content:
+        type: array
+        items:
+          $ref: '#/definitions/ContentItem'
+      context:
+        $ref: '#/definitions/EventContext'
+      composer:
+        $ref: '#/definitions/PartyProxy'
+      category:
+        $ref: '#/definitions/DvCodedText'
+      language:
+        $ref: '#/definitions/DvCodePhrase'
+      territory:
+        $ref: '#/definitions/DvCodePhrase'
+      archetypeDetails:
+        $ref: '#/definitions/Archetyped'
+      archetypeNodeId:
+        type: string
+      feederAudit:
+        $ref: '#/definitions/FeederAudit'
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+      name:
+        $ref: '#/definitions/DvText'
+      uid:
+        $ref: '#/definitions/UIdBasedId'
+      parent:
+        $ref: '#/definitions/Pathable'
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  ContentItem:
+    type: object
+    properties:
+      archetypeDetails:
+        $ref: '#/definitions/Archetyped'
+      archetypeNodeId:
+        type: string
+      feederAudit:
+        $ref: '#/definitions/FeederAudit'
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+      name:
+        $ref: '#/definitions/DvText'
+      uid:
+        $ref: '#/definitions/UIdBasedId'
+      parent:
+        $ref: '#/definitions/Pathable'
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  EventContext:
+    type: object
+    properties:
+      healtCareFacility:
+        $ref: '#/definitions/PartyIdentified'
+      startTime:
+        $ref: '#/definitions/DvDateTime'
+      endTime:
+        $ref: '#/definitions/DvDateTime'
+      participations:
+        type: array
+        items:
+          $ref: '#/definitions/Participation'
+      location:
+        type: string
+      setting:
+        $ref: '#/definitions/DvCodedText'
+      otherContext:
+        $ref: '#/definitions/ItemStructure'
+      parent:
+        $ref: '#/definitions/Pathable'
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  Archetyped:
+    type: object
+    properties:
+      archetypeId:
+        $ref: '#/definitions/ArchetypeId'
+      templateId:
+        $ref: '#/definitions/TemplateId'
+      version:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  FeederAudit:
+    type: object
+    properties:
+      originatingSystemAudit:
+        $ref: '#/definitions/FeederAuditDetails'
+      originatingSystemItemIds:
+        type: array
+        items:
+          $ref: '#/definitions/DvIdentifier'
+      feederSystemAudit:
+        $ref: '#/definitions/FeederAuditDetails'
+      feederSystemIds:
+        type: array
+        items:
+          $ref: '#/definitions/DvIdentifier'
+      originalContent:
+        $ref: '#/definitions/DvEncapsulated'
+      constraint:
+        $ref: '#/definitions/CObject'
+  Link:
+    type: object
+    properties:
+      meaning:
+        $ref: '#/definitions/DvText'
+      meaningType:
+        $ref: '#/definitions/DvText'
+      target:
+        $ref: '#/definitions/DvEhrUri'
+      constraint:
+        $ref: '#/definitions/CObject'
+  UIdBasedId:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  Pathable:
+    type: object
+    properties:
+      parent:
+        $ref: '#/definitions/Pathable'
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  PartyIdentified:
+    type: object
+    properties:
+      name:
+        type: string
+      identifiers:
+        type: array
+        items:
+          $ref: '#/definitions/DvIdentifier'
+      externalRef:
+        $ref: '#/definitions/PartyRef'
+      constraint:
+        $ref: '#/definitions/CObject'
+  Participation:
+    type: object
+    properties:
+      performer:
+        $ref: '#/definitions/PartyProxy'
+      function:
+        $ref: '#/definitions/DvText'
+      mode:
+        $ref: '#/definitions/DvCodedText'
+      time:
+        $ref: '#/definitions/DvInterval[DvDateTime]'
+      constraint:
+        $ref: '#/definitions/CObject'
+  ItemStructure:
+    type: object
+    properties:
+      archetypeDetails:
+        $ref: '#/definitions/Archetyped'
+      archetypeNodeId:
+        type: string
+      feederAudit:
+        $ref: '#/definitions/FeederAudit'
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+      name:
+        $ref: '#/definitions/DvText'
+      uid:
+        $ref: '#/definitions/UIdBasedId'
+      parent:
+        $ref: '#/definitions/Pathable'
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  TemplateId:
+    type: object
+    properties:
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  FeederAuditDetails:
+    type: object
+    properties:
+      systemId:
+        type: string
+      provider:
+        $ref: '#/definitions/PartyIdentified'
+      location:
+        $ref: '#/definitions/PartyIdentified'
+      time:
+        $ref: '#/definitions/DvDateTime'
+      subject:
+        $ref: '#/definitions/PartyProxy'
+      versionId:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvIdentifier:
+    type: object
+    properties:
+      issuer:
+        type: string
+      assigner:
+        type: string
+      id:
+        type: string
+      type:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvEncapsulated:
+    type: object
+    properties:
+      charset:
+        $ref: '#/definitions/DvCodePhrase'
+      language:
+        $ref: '#/definitions/DvCodePhrase'
+      size:
+        format: int32
+        type: integer
+      constraint:
+        $ref: '#/definitions/CObject'
+  DvEhrUri:
+    type: object
+    properties:
+      ehrUriType:
+        format: int32
+        enum:
+          - 0
+          - 1
+        type: integer
+      ehrUriPrefix:
+        type: string
+      ehrUriReference:
+        type: string
+      ehrUriPath:
+        type: string
+      value:
+        type: string
+      constraint:
+        $ref: '#/definitions/CObject'
+  PatientEhr:
+    type: object
+    properties:
+      ehrId:
+        $ref: '#/definitions/HierObjectId'
+      systemId:
+        $ref: '#/definitions/HierObjectId'
+      timeCreated:
+        $ref: '#/definitions/DvDateTime'
+      ehrStatus:
+        $ref: '#/definitions/EhrStatus'
+      constraint:
+        $ref: '#/definitions/CObject'
+  EhrStatus:
+    type: object
+    properties:
+      subject:
+        $ref: '#/definitions/PartySelf'
+      isQueryable:
+        type: boolean
+      isModifiable:
+        type: boolean
+      otherDetails:
+        $ref: '#/definitions/ItemStructure'
+      archetypeDetails:
+        $ref: '#/definitions/Archetyped'
+      archetypeNodeId:
+        type: string
+      feederAudit:
+        $ref: '#/definitions/FeederAudit'
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+      name:
+        $ref: '#/definitions/DvText'
+      uid:
+        $ref: '#/definitions/UIdBasedId'
+      parent:
+        $ref: '#/definitions/Pathable'
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  PartySelf:
+    type: object
+    properties:
+      externalRef:
+        $ref: '#/definitions/PartyRef'
+      constraint:
+        $ref: '#/definitions/CObject'
+  CreateEhrRequest:
+    type: object
+    properties:
+      subjectId:
+        type: string
+      subjectNamespace:
+        type: string
+      committerName:
+        type: string
+  ServerFormInfo:
+    type: object
+    properties:
+      templateId:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      createdTimestamp:
+        format: date-time
+        type: string
+      status:
+        type: string
+      category:
+        type: string
+      creator:
+        type: string
+      type:
+        type: string
+      schemaVersion:
+        type: string
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/ServerResourceInfo'
+  ServerResourceInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      mimetype:
+        type: string
+      type:
+        type: string
+      href:
+        type: string
+  Form:
+    type: object
+    properties:
+      templateId:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      createdTimestamp:
+        format: date-time
+        type: string
+      status:
+        type: string
+      category:
+        type: string
+      creator:
+        type: string
+      type:
+        type: string
+      schemaVersion:
+        type: string
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+  Resource:
+    type: object
+    properties:
+      name:
+        type: string
+      mimetype:
+        type: string
+      type:
+        type: string
+      href:
+        type: string
+      content:
+        type: string
+  Command:
+    type: object
+    properties:
+      gdl:
+        type: string
+  RmType:
+    type: object
+    properties:
+      constraint:
+        $ref: '#/definitions/CObject'
+  ResultSet:
+    type: object
+    properties:
+      name:
+        type: string
+      totalResults:
+        format: int32
+        type: integer
+      columns:
+        type: array
+        items:
+          $ref: '#/definitions/ColumnDef'
+      rows:
+        type: array
+        items:
+          $ref: '#/definitions/Row'
+      tags:
+        type: array
+        items:
+          $ref: '#/definitions/Tag'
+      correlationId:
+        type: string
+  ColumnDef:
+    type: object
+    properties:
+      path:
+        type: string
+      name:
+        type: string
+  Row:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/Object'
+      ehrId:
+        type: string
+      subjectId:
+        type: string
+      subjectNamespace:
+        type: string
+  Tag:
+    type: object
+    properties:
+      row:
+        format: int32
+        type: integer
+      col:
+        format: int32
+        type: integer
+      name:
+        type: string
+      value:
+        type: string
+  ScopedQueryMessage:
+    type: object
+    properties:
+      aql:
+        type: string
+      compositionUids:
+        type: array
+        items:
+          type: string
+      ehrIds:
+        type: array
+        items:
+          type: string
+      tagScope:
+        $ref: '#/definitions/TagScope'
+      partitionBy:
+        $ref: '#/definitions/TagPartitionBy'
+      correlationId:
+        type: string
+  ScopedStoredQueryMessage:
+    type: object
+    properties:
+      compositionUids:
+        type: array
+        items:
+          type: string
+      ehrIds:
+        type: array
+        items:
+          type: string
+      tagScope:
+        $ref: '#/definitions/TagScope'
+      partitionBy:
+        $ref: '#/definitions/TagPartitionBy'
+  AqlValidationRequest:
+    type: object
+    properties:
+      aql:
+        type: string
+  ValidationResult:
+    type: object
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: '#/definitions/ValidationError'
+      hasErrors:
+        type: boolean
+  ValidationError:
+    type: object
+    properties:
+      startIndex:
+        format: int32
+        type: integer
+      stopIndex:
+        format: int32
+        type: integer
+      column:
+        format: int32
+        type: integer
+      line:
+        format: int32
+        type: integer
+      message:
+        type: string
+  AqlAutocompleteRequest:
+    type: object
+    properties:
+      aql:
+        type: string
+      row:
+        format: int32
+        type: integer
+      column:
+        format: int32
+        type: integer
+  DataElementQuery:
+    type: object
+    properties:
+      bindings:
+        type: array
+        items:
+          $ref: '#/definitions/AqlBinding'
+      dataElementParameters:
+        type: array
+        items:
+          $ref: '#/definitions/DataElementParameter'
+  AqlBinding:
+    type: object
+    properties:
+      id:
+        type: string
+      oid:
+        type: string
+      version:
+        type: string
+      approved:
+        type: boolean
+      name:
+        type: string
+      defaultArchetypeId:
+        type: string
+      baseAql:
+        type: string
+      paths:
+        type: array
+        items:
+          $ref: '#/definitions/Path'
+      whereExpressions:
+        type: array
+        items:
+          $ref: '#/definitions/WhereExpression'
+      orderByExpressions:
+        type: array
+        items:
+          $ref: '#/definitions/OrderByExpression'
+      predicates:
+        type: array
+        items:
+          $ref: '#/definitions/Predicate'
+      dataElements:
+        type: array
+        items:
+          $ref: '#/definitions/DataElement'
+      deleted:
+        type: string
+      createdByAuthor:
+        type: string
+      created:
+        format: date-time
+        type: string
+      deletedByAuthor:
+        type: string
+      adminDescription:
+        type: string
+      keyValues:
+        type: array
+        items:
+          $ref: '#/definitions/KeyValue'
+      versionComment:
+        type: string
+      basedOnVersion:
+        type: string
+  DataElementParameter:
+    type: object
+    properties:
+      parameters:
+        type: array
+        items:
+          type: string
+      dataElementIds:
+        type: array
+        items:
+          type: string
+  Path:
+    type: object
+    properties:
+      id:
+        type: string
+      identifierRef:
+        type: string
+      value:
+        type: string
+      adminDescription:
+        type: string
+      dataType:
+        type: string
+  WhereExpression:
+    type: object
+    properties:
+      id:
+        type: string
+      path:
+        type: string
+      operator:
+        type: string
+      value:
+        type: string
+      adminDescription:
+        type: string
+  OrderByExpression:
+    type: object
+    properties:
+      id:
+        type: string
+      value:
+        type: string
+      ascending:
+        type: boolean
+      adminDescription:
+        type: string
+  Predicate:
+    type: object
+    properties:
+      id:
+        type: string
+      where:
+        type: string
+      orderBy:
+        type: string
+      adminDescription:
+        type: string
+  DataElement:
+    type: object
+    properties:
+      id:
+        type: string
+      oid:
+        type: string
+      name:
+        type: string
+      adminName:
+        type: string
+      description:
+        type: string
+      categories:
+        type: string
+      predicateRef:
+        type: string
+      displayFormat:
+        type: string
+      sortFormat:
+        type: string
+      queryScope:
+        type: string
+      isEditable:
+        type: boolean
+      adminDescription:
+        type: string
+      customData:
+        $ref: '#/definitions/CustomData'
+      formatExpressions:
+        type: array
+        items:
+          $ref: '#/definitions/FormatExpression'
+      params:
+        type: array
+        items:
+          $ref: '#/definitions/Param'
+      keyValues:
+        type: array
+        items:
+          $ref: '#/definitions/KeyValue'
+  KeyValue:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+      adminDescription:
+        type: string
+  CustomData:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/Object'
+  FormatExpression:
+    type: object
+    properties:
+      whenExpression:
+        $ref: '#/definitions/WhenExpression'
+      alertType:
+        type: string
+      symbol:
+        type: string
+      adminDescription:
+        type: string
+      description:
+        type: string
+  Param:
+    type: object
+    properties:
+      id:
+        type: string
+      defaultValue:
+        type: string
+  WhenExpression:
+    type: object
+    properties:
+      value:
+        type: string
+      adminDescription:
+        type: string
+  DataElementQueryResult:
+    type: object
+    properties:
+      formattedResults:
+        type: array
+        items:
+          $ref: '#/definitions/FormattedValue'
+  FormattedValue:
+    type: object
+    properties:
+      value:
+        type: string
+      key:
+        $ref: '#/definitions/Object'
+      sortFormat:
+        $ref: '#/definitions/SortFormat'
+      dataElementGuid:
+        type: string
+      formatDescriptions:
+        type: array
+        items:
+          $ref: '#/definitions/FormatDescription'
+  SortFormat:
+    type: object
+    properties:
+      value:
+        $ref: '#/definitions/Object'
+      type:
+        type: string
+  FormatDescription:
+    type: object
+    properties:
+      symbol:
+        type: string
+      alertType:
+        type: string
+  StoredQueryModel:
+    type: object
+    properties:
+      id:
+        format: int64
+        type: integer
+      name:
+        type: string
+      aql:
+        type: string
+      description:
+        type: string
+      time:
+        type: string
+      ehrLink:
+        type: string
+      formats:
+        type: array
+        items:
+          $ref: '#/definitions/FormatModel'
+  FormatModel:
+    type: object
+    properties:
+      id:
+        format: int64
+        type: integer
+      name:
+        type: string
+      value:
+        type: string
+  TemplateInfo:
+    type: object
+    properties:
+      id:
+        format: int64
+        type: integer
+      filename:
+        type: string
+      templateId:
+        type: string
+      concept:
+        type: string
+      archetypeId:
+        type: string
+      validTo:
+        format: date-time
+        type: string
+      createdTimeStamp:
+        format: date-time
+        type: string
+  OperationalTemplate:
+    type: object
+    properties:
+      language:
+        $ref: '#/definitions/DvCodePhrase'
+      uid:
+        $ref: '#/definitions/HierObjectId'
+      templateId:
+        $ref: '#/definitions/TemplateId'
+      concept:
+        type: string
+      definition:
+        $ref: '#/definitions/CArchetypeRoot'
+      isControlled:
+        type: boolean
+      description:
+        $ref: '#/definitions/ResourceDescription'
+      revisionHistory:
+        $ref: '#/definitions/RevisionHistory'
+      annotations:
+        type: array
+        items:
+          $ref: '#/definitions/Annotation'
+        readOnly: true
+      constraints:
+        $ref: '#/definitions/TConstraint'
+      view:
+        $ref: '#/definitions/TView'
+      ontology:
+        $ref: '#/definitions/FlatArchetypeOntology'
+      componentOntologies:
+        type: array
+        items:
+          $ref: '#/definitions/FlatArchetypeOntology'
+  CArchetypeRoot:
+    type: object
+    properties:
+      archetypeId:
+        $ref: '#/definitions/ArchetypeId'
+      templateId:
+        $ref: '#/definitions/TemplateId'
+      terminologyDefinitions:
+        type: object
+        additionalProperties:
+          $ref: '#/definitions/ArchetypeTerminology'
+        readOnly: true
+      terminologyBindings:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties:
+            $ref: '#/definitions/DvCodePhrase'
+        readOnly: true
+      slotNodeId:
+        type: string
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/CAttribute'
+        readOnly: true
+      assumedValue:
+        $ref: '#/definitions/CComplexObject'
+      anyAllowed:
+        type: boolean
+      referenceModelTypeName:
+        type: string
+      occurrences:
+        $ref: '#/definitions/Interval[Int32]'
+      nodeId:
+        type: string
+      parent:
+        $ref: '#/definitions/CAttribute'
+  Annotation:
+    type: object
+    properties:
+      path:
+        type: string
+      items:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/CObject'
+  TConstraint:
+    type: object
+    properties:
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/TAttribute'
+        readOnly: true
+  TView:
+    type: object
+    properties:
+      constraints:
+        type: array
+        items:
+          $ref: '#/definitions/TViewConstraint'
+        readOnly: true
+  FlatArchetypeOntology:
+    type: object
+    properties:
+      archetypeId:
+        type: string
+      terminologyDefinitions:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ArchetypeTerminology'
+      terminologyBindings:
+        type: object
+        additionalProperties:
+          type: object
+          additionalProperties:
+            $ref: '#/definitions/DvCodePhrase'
+      constraintDefinitions:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ArchetypeTerminology'
+      constraintBindings:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ArchetypeTerminology'
+      availableTerminologies:
+        type: array
+        items:
+          type: string
+      specialisationDepth:
+        format: int32
+        type: integer
+      terminologyCodes:
+        type: array
+        items:
+          type: string
+        readOnly: true
+      constraintCodes:
+        type: array
+        items:
+          type: string
+        readOnly: true
+      terminologyAttributeNames:
+        type: array
+        items:
+          type: string
+        readOnly: true
+      parentArchetype:
+        $ref: '#/definitions/Archetype'
+  TAttribute:
+    type: object
+    properties:
+      referenceModelAttributeName:
+        type: string
+      differentialPath:
+        type: string
+      children:
+        type: array
+        items:
+          $ref: '#/definitions/TComplexObject'
+        readOnly: true
+  TViewConstraint:
+    type: object
+    properties:
+      path:
+        type: string
+      items:
+        type: object
+        additionalProperties:
+          type: string
+        readOnly: true
+  TComplexObject:
+    type: object
+    properties:
+      defaultValue:
+        $ref: '#/definitions/DataValue'
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/CAttribute'
+        readOnly: true
+      assumedValue:
+        $ref: '#/definitions/CComplexObject'
+      anyAllowed:
+        type: boolean
+      referenceModelTypeName:
+        type: string
+      occurrences:
+        $ref: '#/definitions/Interval[Int32]'
+      nodeId:
+        type: string
+      parent:
+        $ref: '#/definitions/CAttribute'
+  DataValue:
+    type: object
+    properties:
+      constraint:
+        $ref: '#/definitions/CObject'
+  VaqmConfiguration:
+    type: object
+    properties:
+      bindings:
+        type: array
+        items:
+          $ref: '#/definitions/AqlBinding'
+  DeleteGuidVersion:
+    type: object
+    properties:
+      guid:
+        $ref: '#/definitions/GuidVersion'
+      deletedByUser:
+        type: string
+  GuidVersion:
+    type: object
+    properties:
+      guid:
+        type: string
+      version:
+        type: string
+  FilterScope:
+    type: object
+    properties:
+      approved:
+        type: boolean
+      oids:
+        type: array
+        items:
+          type: string
+      ids:
+        type: array
+        items:
+          type: string
+      guidVersions:
+        type: array
+        items:
+          $ref: '#/definitions/GuidVersion'
+      oidVersions:
+        type: array
+        items:
+          $ref: '#/definitions/OidVersion'
+  OidVersion:
+    type: object
+    properties:
+      oid:
+        type: string
+      version:
+        type: string
