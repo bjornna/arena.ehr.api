@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   version: v1
   title: Arena EHR Server API Documentation
-host: 'vt-selecta01:9000'
+host: 'atp-acsagents.westeurope.cloudapp.azure.com:9000'
 schemes:
   - http
 paths:
