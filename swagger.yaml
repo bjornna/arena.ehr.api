@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   version: v1
   title: Arena EHR Server API Documentation
-host: 'arenaehr.dips.no:9000'
+host: 'vt-selecta01:9000'
 schemes:
   - http
 paths:
@@ -10,7 +10,6 @@ paths:
     get:
       tags:
         - Archetype
-      summary: 'Get a list of all Arcehtypes in the system'
       operationId: Archetype_GetAll
       consumes: []
       produces:
@@ -22,7 +21,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ArchetypeInfo'
+            $ref: '#/definitions/DIPS.Arena.Ehr.Gdl.Data.Archetypes.ArchetypeInfo'
       deprecated: false
     post:
       tags:
@@ -44,23 +43,25 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CreateArchetypeRequest'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Gdl.Api.Internal.Archetypes.CreateArchetypeRequest
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   '/api/v1/archetype/{id}':
     get:
       tags:
         - Archetype
-      summary: 'Get a representation of the given archetype id i.e. openEHR-EHR-OBSERVATION.blood_pressure.v1.'
       operationId: Archetype_Get
       consumes: []
       produces:
         - application/xml
         - text/xml
+        - application/json
+        - text/json
         - application/vnd.dips.openehr+xml
       parameters:
         - name: id
@@ -71,7 +72,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Archetype'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Archetypes.Archetype'
       deprecated: false
   /api/v1/archetype/upload:
     post:
@@ -88,13 +89,13 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
-  '/api/v1/cds/{ehrId}/{guideId}':
+  '/api/v1/chart/vaqm/{chartId}':
     get:
       tags:
-        - Cds
-      operationId: Cds_Get
+        - Chart
+      operationId: Chart_GetVaqmChart
       consumes: []
       produces:
         - application/xml
@@ -102,25 +103,79 @@ paths:
         - application/json
         - text/json
       parameters:
-        - name: ehrId
+        - name: chartId
           in: path
           required: true
           type: string
-        - name: guideId
-          in: path
-          required: true
+        - name: queryArgs.scope
+          in: query
+          required: false
+          type: string
+        - name: queryArgs.scopeValues
+          in: query
+          required: false
+          type: string
+        - name: queryArgs.min
+          in: query
+          required: false
+          type: string
+        - name: queryArgs.max
+          in: query
+          required: false
           type: string
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/DIPS.Unify.Format.Charts.Chart'
       deprecated: false
-  /api/v1/cds:
+  /api/v1/chart/vaqm:
+    get:
+      tags:
+        - Chart
+      operationId: Chart_GetVaqmChartDescriptions
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: >-
+                #/definitions/DIPS.Arena.Ehr.Knowledge.Vaqm.Data.Chart.ChartDescription
+      deprecated: false
+  /api/v1/chart/vaqm/admin/config:
+    get:
+      tags:
+        - Chart
+      operationId: Chart_GetVaqmChartConfigurations
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: includeDeleted
+          in: query
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.Vaqm.Chart.VaqmChartConfigurationVersion
+      deprecated: false
     post:
       tags:
-        - Cds
-      operationId: Cds_Post
+        - Chart
+      operationId: Chart_SaveVaqmChartConfiguration
       consumes:
         - application/xml
         - text/xml
@@ -133,16 +188,63 @@ paths:
         - application/json
         - text/json
       parameters:
-        - name: request
+        - name: vaqmChartConfiguration
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ScopedGdlRequest'
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.Vaqm.Chart.VaqmChartConfigurationVersion
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.Vaqm.Chart.VaqmChartConfigurationVersion
+      deprecated: false
+  '/api/v1/chart/vaqm/admin/config/{chartId}':
+    get:
+      tags:
+        - Chart
+      operationId: Chart_GetVaqmChartConfiguration
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: chartId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.Vaqm.Chart.VaqmChartConfigurationVersion
+      deprecated: false
+    delete:
+      tags:
+        - Chart
+      operationId: Chart_DeleteVaqmChartConfiguration
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: chartId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.Vaqm.Chart.VaqmChartConfigurationVersion
       deprecated: false
   '/api/v1/composition/{compositionUid}':
     get:
@@ -167,7 +269,8 @@ paths:
         '200':
           description: OK.
           schema:
-            $ref: '#/definitions/Composition'
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.Composition
         '401':
           description: Unauthorized.
         '403':
@@ -202,7 +305,8 @@ paths:
           description: The composition.
           required: true
           schema:
-            $ref: '#/definitions/Composition'
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.Composition
         - name: committerName
           in: query
           description: The name of the committer.
@@ -210,7 +314,9 @@ paths:
           type: string
         - name: versionLifecycleState
           in: query
-          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
           required: true
           type: integer
           format: int32
@@ -221,7 +327,9 @@ paths:
           type: string
         - name: precedingVersionUid
           in: query
-          description: This will result in a new composition based on the preceding composition version.
+          description: >-
+            This will result in a new composition based on the preceding
+            composition version.
           required: false
           type: string
       responses:
@@ -241,7 +349,7 @@ paths:
       tags:
         - Composition
       summary: Create a new composition.
-      operationId: Composition_Post
+      operationId: Composition_Post_Subject
       consumes:
         - application/xml
         - text/xml
@@ -261,7 +369,8 @@ paths:
           description: The composition.
           required: true
           schema:
-            $ref: '#/definitions/Composition'
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.Composition
         - name: committerName
           in: query
           description: The name of the committer.
@@ -269,7 +378,9 @@ paths:
           type: string
         - name: versionLifecycleState
           in: query
-          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
           required: true
           type: integer
           format: int32
@@ -285,7 +396,9 @@ paths:
           type: string
         - name: precedingVersionUid
           in: query
-          description: This will result in a new composition based on the preceding composition version.
+          description: >-
+            This will result in a new composition based on the preceding
+            composition version.
           required: false
           type: string
       responses:
@@ -325,7 +438,8 @@ paths:
           description: The composition.
           required: true
           schema:
-            $ref: '#/definitions/Composition'
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.Composition
         - name: committerName
           in: query
           description: The name of the committer.
@@ -333,7 +447,9 @@ paths:
           type: string
         - name: versionLifecycleState
           in: query
-          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
           required: true
           type: integer
           format: int32
@@ -359,7 +475,7 @@ paths:
       tags:
         - Composition
       summary: Create a new composition.
-      operationId: Composition_PostBulk
+      operationId: Composition_PostBulk_Subject
       consumes:
         - application/xml
         - text/xml
@@ -379,7 +495,8 @@ paths:
           description: The composition.
           required: true
           schema:
-            $ref: '#/definitions/Composition'
+            $ref: >-
+              #/definitions/DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.Composition
         - name: committerName
           in: query
           description: The name of the committer.
@@ -387,7 +504,9 @@ paths:
           type: string
         - name: versionLifecycleState
           in: query
-          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
           required: true
           type: integer
           format: int32
@@ -439,14 +558,14 @@ paths:
           schema:
             type: object
             additionalProperties:
-              $ref: '#/definitions/Object'
+              $ref: '#/definitions/System.Object'
             example:
-              /context/start_time/value: '2016-06-22T05:08:52.0424687+02:00'
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/magnitude": 120
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/units": 'mm[Hg]'
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/magnitude": 80
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/units": 'mm[Hg]'
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0033]/value/value": comment here...
+              /context/start_time/value: '2017-02-22T06:52:42.02552+01:00'
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/magnitude': 120
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/units': 'mm[Hg]'
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/magnitude': 80
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/units': 'mm[Hg]'
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0033]/value/value': comment here...
         - name: templateId
           in: query
           description: The template id.
@@ -459,7 +578,9 @@ paths:
           type: string
         - name: versionLifecycleState
           in: query
-          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
           required: true
           type: integer
           format: int32
@@ -475,7 +596,9 @@ paths:
           type: string
         - name: precedingVersionUid
           in: query
-          description: This will result in a new composition based on the preceding composition version.
+          description: >-
+            This will result in a new composition based on the preceding
+            composition version.
           required: false
           type: string
       responses:
@@ -495,7 +618,7 @@ paths:
       tags:
         - Composition
       summary: Create a new composition.
-      operationId: Composition_PostFlat
+      operationId: Composition_PostFlat_EhrId
       consumes:
         - application/xml
         - text/xml
@@ -516,14 +639,14 @@ paths:
           schema:
             type: object
             additionalProperties:
-              $ref: '#/definitions/Object'
+              $ref: '#/definitions/System.Object'
             example:
-              /context/start_time/value: '2016-06-22T05:08:52.0424687+02:00'
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/magnitude": 120
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/units": 'mm[Hg]'
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/magnitude": 80
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/units": 'mm[Hg]'
-              "/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value='Blodtrykk#1']/data[at0001]/events[at0006]/data[at0003]/items[at0033]/value/value": comment here...
+              /context/start_time/value: '2017-02-22T06:52:42.02552+01:00'
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/magnitude': 120
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0004]/value/units': 'mm[Hg]'
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/magnitude': 80
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0005]/value/units': 'mm[Hg]'
+              '/content[openEHR-EHR-OBSERVATION.blood_pressure.v1 and name/value=''Blodtrykk#1'']/data[at0001]/events[at0006]/data[at0003]/items[at0033]/value/value': comment here...
         - name: templateId
           in: query
           description: The template id.
@@ -536,7 +659,9 @@ paths:
           type: string
         - name: versionLifecycleState
           in: query
-          description: 'The version Lifecycle State (532=complete, 553=incomplete, 523=deleted)'
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
           required: true
           type: integer
           format: int32
@@ -547,7 +672,9 @@ paths:
           type: string
         - name: precedingVersionUid
           in: query
-          description: This will result in a new composition based on the preceding composition version.
+          description: >-
+            This will result in a new composition based on the preceding
+            composition version.
           required: false
           type: string
       responses:
@@ -626,7 +753,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/PatientEhr'
+            $ref: '#/definitions/DIPS.OpenEhr.RM.Domain.Ehr.EhrPackage.PatientEhr'
       deprecated: false
     post:
       tags:
@@ -650,12 +777,346 @@ paths:
           description: The request message.
           required: true
           schema:
-            $ref: '#/definitions/CreateEhrRequest'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Internal.Ehrs.CreateEhrRequest
       responses:
         '200':
           description: OK
           schema:
             type: string
+      deprecated: false
+  '/api/v1/folder/{folderUid}':
+    get:
+      tags:
+        - Folder
+      summary: Gets the folder with specified UID.
+      operationId: Folder_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr+xml
+      parameters:
+        - name: folderUid
+          in: path
+          description: The Folder UID.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK.
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.RM.Common.DirectoryPackage.Folder'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '404':
+          description: Not found.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{ehrId}/folder':
+    post:
+      tags:
+        - Folder
+      summary: Create a new folder.
+      operationId: Folder_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.openehr+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: folder
+          in: body
+          description: The folder.
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.RM.Common.DirectoryPackage.Folder'
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
+          required: true
+          type: integer
+          format: int32
+        - name: ehrId
+          in: path
+          description: The ehr Id.
+          required: true
+          type: string
+        - name: precedingVersionUid
+          in: query
+          description: >-
+            This will result in a new folder based on the preceding folder
+            version.
+          required: false
+          type: string
+      responses:
+        '201':
+          description: Created - The folder was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/{subjectNamespace}/{subjectId}/folder':
+    post:
+      tags:
+        - Folder
+      summary: Create a new folder.
+      operationId: Folder_Post_Subject
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.openehr+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: folder
+          in: body
+          description: The folder.
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.RM.Common.DirectoryPackage.Folder'
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+        - name: versionLifecycleState
+          in: query
+          description: >-
+            The version Lifecycle State (532=complete, 553=incomplete,
+            523=deleted)
+          required: true
+          type: integer
+          format: int32
+        - name: subjectId
+          in: path
+          description: The subject id.
+          required: true
+          type: string
+        - name: subjectNamespace
+          in: path
+          description: The subject namespace.
+          required: true
+          type: string
+        - name: precedingVersionUid
+          in: query
+          description: >-
+            This will result in a new folder based on the preceding folder
+            version.
+          required: false
+          type: string
+      responses:
+        '201':
+          description: Created - The folder was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  '/api/v1/folder/{versionedFolderUid}/delete':
+    post:
+      tags:
+        - Folder
+      summary: Creates a new version with version lifecycle state = 523 (deleted).
+      operationId: Folder_Delete
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: versionedFolderUid
+          in: path
+          description: The UID of the folder to be deleted.
+          required: true
+          type: string
+        - name: committerName
+          in: query
+          description: The name of the committer.
+          required: true
+          type: string
+      responses:
+        '201':
+          description: Created - The folder was successfully created.
+          schema:
+            type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal Server Error.
+      deprecated: false
+  /api/v1/foldertemplate:
+    get:
+      tags:
+        - FolderTemplate
+      operationId: FolderTemplate_Get
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: >-
+                #/definitions/DIPS.Arena.Ehr.Knowledge.Folder.Data.ServerFolderTemplateInfo
+      deprecated: false
+    post:
+      tags:
+        - FolderTemplate
+      operationId: FolderTemplate_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - text/plain
+      parameters:
+        - name: folder
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.Forms.Format.Folder.FolderResources'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+      deprecated: false
+  '/api/v1/foldertemplate/{includeDeleted}':
+    get:
+      tags:
+        - FolderTemplate
+      operationId: FolderTemplate_Get_IncludeDeleted
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: includeDeleted
+          in: path
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: >-
+                #/definitions/DIPS.Arena.Ehr.Knowledge.Folder.Data.ServerFolderTemplateInfo
+      deprecated: false
+  '/api/v1/foldertemplate/{name}/{version}':
+    get:
+      tags:
+        - FolderTemplate
+      operationId: FolderTemplate_Get_Name_Version
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.Forms.Format.Folder.FolderResources'
+      deprecated: false
+    delete:
+      tags:
+        - FolderTemplate
+      operationId: FolderTemplate_Delete
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: version
+          in: path
+          required: true
+          type: string
+        - name: deletedBy
+          in: query
+          required: true
+          type: string
+        - name: permanent
+          in: query
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: integer
+         
       deprecated: false
   '/api/v1/form/{name}/{version}':
     get:
@@ -681,7 +1142,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
     delete:
       tags:
@@ -706,13 +1167,13 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   '/api/v1/form/{name}/{version}/resource/{resourceName}':
     get:
       tags:
         - Form
-      operationId: Form_Get
+      operationId: Form_Get_Name_Veroion_Resource
       consumes: []
       produces:
         - application/xml
@@ -736,13 +1197,13 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/form:
     get:
       tags:
         - Form
-      operationId: Form_Get
+      operationId: Form_Get_List
       consumes: []
       produces:
         - application/xml
@@ -755,7 +1216,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/ServerFormInfo'
+              $ref: '#/definitions/DIPS.Arena.Ehr.Knowledge.Forms.Data.ServerFormInfo'
       deprecated: false
     post:
       tags:
@@ -777,18 +1238,18 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/Form'
+            $ref: '#/definitions/DIPS.OpenEhr.Forms.IO.Form'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   '/api/v1/form/{status}':
     get:
       tags:
         - Form
-      operationId: Form_Get
+      operationId: Form_Get_Status
       consumes: []
       produces:
         - application/xml
@@ -804,7 +1265,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/form/upload:
     post:
@@ -821,7 +1282,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/gdl:
     get:
@@ -838,7 +1299,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
     post:
       tags:
@@ -860,18 +1321,19 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/Command'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Gdl.Api.Internal.Gdl.StoreGuide.Command
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   '/api/v1/gdl/{guideId}':
     get:
       tags:
         - Gdl
-      operationId: Gdl_Get
+      operationId: Gdl_Get_GuideId
       consumes: []
       produces:
         - application/xml
@@ -887,7 +1349,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/gdl/upload:
     post:
@@ -904,9 +1366,117 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
-  /api/Link:
+  '/api/v1/cds/{ehrId}/{guideId}':
+    get:
+      tags:
+        - Gdl
+      operationId: Gdl_ObsoleteHttpGetExecuteGdl
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: ehrId
+          in: path
+          required: true
+          type: string
+        - name: guideId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/System.Object'
+      deprecated: true
+  '/api/v1/gdl/{guideId}/query/{ehrId}':
+    get:
+      tags:
+        - Gdl
+      operationId: Gdl_HttpGetExecuteGdl
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: ehrId
+          in: path
+          required: true
+          type: string
+        - name: guideId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/System.Object'
+      deprecated: false
+  /api/v1/cds:
+    post:
+      tags:
+        - Gdl
+      operationId: Gdl_ObsoleteHttpPostExecuteGdl
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.Arena.Ehr.Gdl.Api.Rest.ScopedGdlRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/System.Object'
+      deprecated: true
+  /api/v1/gdl/query:
+    post:
+      tags:
+        - Gdl
+      operationId: Gdl_HttpPostExecuteGdl
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: request
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.Arena.Ehr.Gdl.Api.Rest.ScopedGdlRequest'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/System.Object'
+      deprecated: false
+  /api/v1/link:
     get:
       tags:
         - Link
@@ -929,7 +1499,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/RmType'
+            $ref: '#/definitions/DIPS.OpenEhr.RM.Common.RmType'
         '404':
           description: Not Found
       deprecated: false
@@ -937,7 +1507,9 @@ paths:
     get:
       tags:
         - Query
-      summary: 'Execute AQL query with the given AQL string '
+      summary: >-
+        Returns the data produced by the specified query, along with some
+        meta-data.
       operationId: Query_Get
       consumes: []
       produces:
@@ -957,12 +1529,14 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ResultSet'
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
       deprecated: false
     post:
       tags:
         - Query
-      summary: 'Returns the data produced by the specified query, along with some meta-data.'
+      summary: >-
+        Returns the data produced by the specified query, along with some
+        meta-data.
       operationId: Query_Post
       consumes:
         - application/xml
@@ -983,18 +1557,18 @@ paths:
           description: QueryRequest containing query and optional scope of query.
           required: true
           schema:
-            $ref: '#/definitions/ScopedQueryMessage'
+            $ref: '#/definitions/DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedQueryMessage'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ResultSet'
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
       deprecated: false
   /api/v1/queries:
     post:
       tags:
         - Query
-      operationId: Query_Post
+      operationId: Query_Post_Queries
       consumes:
         - application/xml
         - text/xml
@@ -1014,147 +1588,21 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/ScopedQueryMessage'
+              $ref: >-
+                #/definitions/DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedQueryMessage
       responses:
         '200':
           description: OK
           schema:
             type: array
             items:
-              $ref: '#/definitions/ResultSet'
-      deprecated: false
-  '/api/v1/query/stored/{name}':
-    get:
-      tags:
-        - Query
-      summary: 'Returns the data produced by the specified stored query, along with some meta-data.'
-      operationId: Query_GetStoredQuery
-      consumes: []
-      produces:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/vnd.dips.openehr.resultset+xml
-        - application/vnd.dips.openehr.resultset.tableview+json
-      parameters:
-        - name: name
-          in: path
-          description: The name of the stored query.
-          required: true
-          type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ResultSet'
-      deprecated: false
-    post:
-      tags:
-        - Query
-      operationId: Query_Post
-      consumes:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/x-www-form-urlencoded
-      produces:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/vnd.dips.openehr.resultset+xml
-        - application/vnd.dips.openehr.resultset.tableview+json
-      parameters:
-        - name: message
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ScopedStoredQueryMessage'
-        - name: name
-          in: path
-          required: true
-          type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ResultSet'
-      deprecated: false
-  '/api/v1/query/stored/{name}/{formatName}':
-    get:
-      tags:
-        - Query
-      summary: 'Returns the data produced by the specified stored query, along with some meta-data.'
-      operationId: Query_GetStoredQuery
-      consumes: []
-      produces:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/vnd.dips.openehr.resultset+xml
-        - application/vnd.dips.openehr.resultset.tableview+json
-      parameters:
-        - name: name
-          in: path
-          description: The name of the stored query.
-          required: true
-          type: string
-        - name: formatName
-          in: path
-          description: The presentation name.
-          required: true
-          type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ResultSet'
-      deprecated: false
-    post:
-      tags:
-        - Query
-      operationId: Query_Post
-      consumes:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/x-www-form-urlencoded
-      produces:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/vnd.dips.openehr.resultset+xml
-        - application/vnd.dips.openehr.resultset.tableview+json
-      parameters:
-        - name: message
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ScopedStoredQueryMessage'
-        - name: name
-          in: path
-          required: true
-          type: string
-        - name: formatName
-          in: path
-          required: true
-          type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/ResultSet'
+              $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
       deprecated: false
   /api/v1/query/validate:
     post:
       tags:
         - Query
-      operationId: Query_Post
+      operationId: Query_Post_Validate
       consumes:
         - application/xml
         - text/xml
@@ -1171,41 +1619,13 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/AqlValidationRequest'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Internal.Queries.AqlValidationRequest
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ValidationResult'
-      deprecated: false
-  /api/v1/query/vaqm:
-    post:
-      tags:
-        - Query
-      operationId: Query_Post
-      consumes:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-        - application/x-www-form-urlencoded
-        - application/vnd.dips.dataelementquery+xml
-      produces:
-        - application/xml
-        - text/xml
-        - application/json
-        - text/json
-      parameters:
-        - name: dataElementQuery
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/DataElementQuery'
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/DataElementQueryResult'
+            $ref: '#/definitions/DIPS.OpenEhr.Aql.ValidationResult'
       deprecated: false
   /api/v1/query/doc:
     get:
@@ -1240,7 +1660,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/server/database_id:
     get:
@@ -1257,7 +1677,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/server/version:
     get:
@@ -1274,7 +1694,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/server/status:
     get:
@@ -1291,7 +1711,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/storedquery:
     get:
@@ -1310,7 +1730,8 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/StoredQueryModel'
+              $ref: >-
+                #/definitions/DIPS.Arena.Ehr.Knowledge.StoredQueries.Data.StoredQueryModel
       deprecated: false
     put:
       tags:
@@ -1332,12 +1753,13 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/StoredQueryModel'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Knowledge.StoredQueries.Data.StoredQueryModel
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
     post:
       tags:
@@ -1359,18 +1781,152 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/StoredQueryModel'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Knowledge.StoredQueries.Data.StoredQueryModel
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
+      deprecated: false
+  '/api/v1/storedquery/{name}/query':
+    get:
+      tags:
+        - StoredQuery
+      summary: >-
+        Returns the data produced by the specified stored query, along with some
+        meta-data.
+      operationId: StoredQuery_GetStoredQuery
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: name
+          in: path
+          description: The name of the stored query.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: false
+    post:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_Post_Basic
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedStoredQueryMessage
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: false
+  '/api/v1/storedquery/{name}/{formatName}/query':
+    get:
+      tags:
+        - StoredQuery
+      summary: >-
+        Returns the data produced by the specified stored query, along with some
+        meta-data.
+      operationId: StoredQuery_GetStoredQuery_Name_Format
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: name
+          in: path
+          description: The name of the stored query.
+          required: true
+          type: string
+        - name: formatName
+          in: path
+          description: The presentation name.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: false
+    post:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_Post_ScopedQuery
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedStoredQueryMessage
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: formatName
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
       deprecated: false
   '/api/v1/storedquery/{name}':
     get:
       tags:
         - StoredQuery
-      operationId: StoredQuery_Get
+      operationId: StoredQuery_Get_Name
       consumes: []
       produces:
         - application/xml
@@ -1386,7 +1942,8 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/StoredQueryModel'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Knowledge.StoredQueries.Data.StoredQueryModel
       deprecated: false
     delete:
       tags:
@@ -1407,8 +1964,141 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
+  '/api/v1/query/stored/{name}':
+    get:
+      tags:
+        - StoredQuery
+      summary: >-
+        Returns the data produced by the specified stored query, along with some
+        meta-data.
+      operationId: StoredQuery_DeprecatedGetStoredQuery
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: name
+          in: path
+          description: The name of the stored query.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: true
+    post:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_DepreactedPost
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedStoredQueryMessage
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: true
+  '/api/v1/query/stored/{name}/{formatName}':
+    get:
+      tags:
+        - StoredQuery
+      summary: >-
+        Returns the data produced by the specified stored query, along with some
+        meta-data.
+      operationId: StoredQuery_DeprecatedGetStoredQuery_Basic
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: name
+          in: path
+          description: The name of the stored query.
+          required: true
+          type: string
+        - name: formatName
+          in: path
+          description: The presentation name.
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: true
+    post:
+      tags:
+        - StoredQuery
+      operationId: StoredQuery_DeprecatedPost
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultset+xml
+        - application/vnd.dips.openehr.resultset.tableview+json
+      parameters:
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedStoredQueryMessage
+        - name: name
+          in: path
+          required: true
+          type: string
+        - name: formatName
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: true
   '/api/v1/{compositionUid}/tags':
     post:
       tags:
@@ -1439,12 +2129,12 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/TagValues'
+              $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagValues'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/tag/keys:
     get:
@@ -1461,7 +2151,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/template:
     get:
@@ -1480,7 +2170,8 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/TemplateInfo'
+              $ref: >-
+                #/definitions/DIPS.Arena.Ehr.Datastore.Api.Internal.Templates.TemplateInfo
       deprecated: false
     post:
       tags:
@@ -1496,13 +2187,13 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   '/api/v1/template/{id}':
     get:
       tags:
         - Template
-      operationId: Template_Get
+      operationId: Template_Get_Id
       consumes: []
       produces:
         - application/xml
@@ -1519,13 +2210,14 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/TemplateInfo'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Internal.Templates.TemplateInfo
       deprecated: false
-  '/api/v1/template/{templateId}':
+  '/api/v1/template/name/{templateId}':
     get:
       tags:
         - Template
-      operationId: Template_Get
+      operationId: Template_Get_By_Name
       consumes: []
       produces:
         - application/xml
@@ -1541,7 +2233,8 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/TemplateInfo'
+            $ref: >-
+              #/definitions/DIPS.Arena.Ehr.Datastore.Api.Internal.Templates.TemplateInfo
       deprecated: false
   '/api/v1/template/{id}/delete':
     put:
@@ -1564,7 +2257,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   '/api/v1/template/{id}/undelete':
     put:
@@ -1587,7 +2280,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   '/api/v1/template/{templateId}/opt':
     get:
@@ -1610,13 +2303,13 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/OperationalTemplate'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.OperationalTemplate'
       deprecated: false
-  '/api/v1/template/{fileName}':
+  '/api/v1/template/filename/{fileName}':
     post:
       tags:
         - Template
-      operationId: Template_Post
+      operationId: Template_Post_Filename
       consumes:
         - application/xml
         - text/xml
@@ -1634,7 +2327,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/OperationalTemplate'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.OperationalTemplate'
         - name: fileName
           in: path
           required: true
@@ -1643,7 +2336,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/template/lastupdate:
     get:
@@ -1660,13 +2353,13 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/System.Object'
       deprecated: false
   /api/v1/vaqm/save:
     post:
       tags:
         - Vaqm
-      summary: Saves the given AqlBindings
+      summary: Saves the given VaqmConfigurations
       operationId: Vaqm_Save
       consumes:
         - application/xml
@@ -1680,23 +2373,28 @@ paths:
         - text/xml
         - application/json
         - text/json
+        - application/vnd.dips.vaqm+xml
       parameters:
-        - name: vaqmConfiguration
+        - name: vaqmConfigurations
           in: body
           required: true
           schema:
-            $ref: '#/definitions/VaqmConfiguration'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       deprecated: false
   /api/v1/vaqm/approve:
     post:
       tags:
         - Vaqm
-      summary: Approves the given AqlBindings
+      summary: Approves the given VaqmConfigurations
       operationId: Vaqm_Approve
       consumes:
         - application/xml
@@ -1710,23 +2408,28 @@ paths:
         - text/xml
         - application/json
         - text/json
+        - application/vnd.dips.vaqm+xml
       parameters:
-        - name: vaqmConfiguration
+        - name: vaqmConfigurations
           in: body
           required: true
           schema:
-            $ref: '#/definitions/VaqmConfiguration'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       deprecated: false
   /api/v1/vaqm/delete:
     post:
       tags:
         - Vaqm
-      summary: Deletes the AqlBindings with the given ids
+      summary: Deletes VaqmConfigurations with the given ids
       operationId: Vaqm_Delete
       consumes:
         - application/xml
@@ -1739,20 +2442,25 @@ paths:
         - text/xml
         - application/json
         - text/json
+        - application/vnd.dips.vaqm+xml
       parameters:
         - name: deleteGuidVersions
           in: body
-          description: 'List of AqlBinding guidversions (GUID, string) and username for the user that deleted'
+          description: >-
+            List of VaqmConfigurations guidversions (GUID, string) and username
+            for the user that deleted
           required: true
           schema:
             type: array
             items:
-              $ref: '#/definitions/DeleteGuidVersion'
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.DeleteGuidVersion'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Object'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       deprecated: false
   /api/v1/vaqm:
     get:
@@ -1776,18 +2484,28 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: onlyLatest
+          in: query
+          required: false
+          type: boolean
+        - name: resolveKeyValues
+          in: query
+          required: false
+          type: boolean
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/VaqmConfiguration'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       deprecated: false
-  /api/v1/vaqm/aqlbinding:
+  /api/v1/vaqm/vaqmconfiguration:
     post:
       tags:
         - Vaqm
-      summary: Returns the VAQM configuration for the latest saved AqlBindings with the given ids
-      operationId: Vaqm_FilterAqlBinding
+      summary: Returns the latest saved VaqmConfigurations with the given ids
+      operationId: Vaqm_FilterVaqmConfiguration
       consumes:
         - application/xml
         - text/xml
@@ -1803,21 +2521,30 @@ paths:
       parameters:
         - name: filterScope
           in: body
-          description: List of AqlBinding ids (GUID)
+          description: List of VaqmConfiguration ids (GUID)
           required: true
           schema:
-            $ref: '#/definitions/FilterScope'
+            $ref: '#/definitions/DIPS.OpenEhr.Vaqm.FilterScope'
+        - name: resolveKeyValues
+          in: query
+          description: >-
+            True if the values of KeyValues should be resolved from external
+            systems
+          required: false
+          type: boolean
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/VaqmConfiguration'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       deprecated: false
   /api/v1/vaqm/dataelement:
     post:
       tags:
         - Vaqm
-      summary: Returns the VAQM configuration for the latest saved AqlBindings with DataElement ids
+      summary: Returns the the latest saved VaqmConfigurations with DataElement ids
       operationId: Vaqm_FilterDataElementsLatestSavedByIds
       consumes:
         - application/xml
@@ -1837,23 +2564,240 @@ paths:
           description: List of DataElement ids (GUID)
           required: true
           schema:
-            $ref: '#/definitions/FilterScope'
+            $ref: '#/definitions/DIPS.OpenEhr.Vaqm.FilterScope'
+        - name: resolveKeyValues
+          in: query
+          description: >-
+            True if the values of KeyValues should be resolved from external
+            systems
+          required: false
+          type: boolean
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/VaqmConfiguration'
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
       deprecated: false
+  /api/v1/vaqm/allconfig:
+    get:
+      tags:
+        - Vaqm
+      summary: Return all stored VaqmSystemConfigs
+      operationId: Vaqm_GetAllSystemConfig
+      consumes: []
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+      deprecated: false
+  /api/v1/vaqm/config:
+    get:
+      tags:
+        - Vaqm
+      summary: Return all stored VaqmSystemConfigs matching the given keys
+      operationId: Vaqm_GetSystemConfig
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: keys
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+      deprecated: false
+    post:
+      tags:
+        - Vaqm
+      summary: Save given KeyValues as VaqmSystemConfigs
+      operationId: Vaqm_SaveSystemConfig
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: keyValues
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+      deprecated: false
+  /api/v1/vaqm/config/delete:
+    post:
+      tags:
+        - Vaqm
+      summary: Delete KeyValues with given keys
+      operationId: Vaqm_DeleteSystemConfig
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: keys
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+      deprecated: false
+  /api/v1/vaqm/vaqmconfigurationquery:
+    post:
+      tags:
+        - Vaqm
+      operationId: Vaqm_PostVaqmConfigurationQuery
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.vaqmconfigurationquery+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/vnd.dips.openehr.resultsets+xml
+      parameters:
+        - name: vaqmConfigurationQuery
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQuery'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ResultSet'
+      deprecated: false
+  /api/v1/vaqm/dataelementquery:
+    post:
+      tags:
+        - Vaqm
+      operationId: Vaqm_Post
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.dataelementquery+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: dataElementQuery
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.DataElementQuery'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.DataElementQueryResult'
+      deprecated: false
+  /api/v1/query/vaqm:
+    post:
+      tags:
+        - Vaqm
+      operationId: Vaqm_DeprecatedPost
+      consumes:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+        - application/vnd.dips.dataelementquery+xml
+      produces:
+        - application/xml
+        - text/xml
+        - application/json
+        - text/json
+      parameters:
+        - name: dataElementQuery
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.DataElementQuery'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.DataElementQueryResult'
+      deprecated: true
 definitions:
-  CreateArchetypeRequest:
+  DIPS.Arena.Ehr.Gdl.Api.Internal.Archetypes.CreateArchetypeRequest:
     type: object
     properties:
       adl:
         type: string
-  Object:
+  System.Object:
     type: object
     properties: {}
-  ArchetypeInfo:
+  DIPS.Arena.Ehr.Gdl.Data.Archetypes.ArchetypeInfo:
     type: object
     properties:
       archetypeId:
@@ -1865,81 +2809,86 @@ definitions:
       createdTime:
         format: date-time
         type: string
-  Archetype:
+  DIPS.OpenEhr.AM.Aom.Archetypes.Archetype:
     type: object
     properties:
       adlVersion:
         type: string
       archetypeId:
-        $ref: '#/definitions/ArchetypeId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ArchetypeId
       uid:
-        $ref: '#/definitions/HierObjectId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.HierObjectId
       concept:
         type: string
       parentArchetypeId:
-        $ref: '#/definitions/ArchetypeId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ArchetypeId
       definition:
-        $ref: '#/definitions/CComplexObject'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CComplexObject'
       ontology:
-        $ref: '#/definitions/ArchetypeOntology'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeOntology'
       invariants:
         type: array
         items:
-          $ref: '#/definitions/Assertion'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Assertions.Assertion'
         readOnly: true
       id:
         type: string
       isDeleted:
         type: boolean
       originalLanguage:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       translations:
         type: object
         additionalProperties:
-          $ref: '#/definitions/TranslationDetails'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.TranslationDetails
       description:
-        $ref: '#/definitions/ResourceDescription'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.ResourceDescription
       revisionHistory:
-        $ref: '#/definitions/RevisionHistory'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.RevisionHistory'
       isControlled:
         type: boolean
       constraint:
-        $ref: '#/definitions/CObject'
-  ArchetypeId:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.ArchetypeId:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  HierObjectId:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.HierObjectId:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  CComplexObject:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.AM.Aom.ConstraintModel.CComplexObject:
     type: object
     properties:
       attributes:
         type: array
         items:
-          $ref: '#/definitions/CAttribute'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute'
         readOnly: true
       assumedValue:
-        $ref: '#/definitions/CComplexObject'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CComplexObject'
       anyAllowed:
         type: boolean
       referenceModelTypeName:
         type: string
       occurrences:
-        $ref: '#/definitions/Interval[Int32]'
+        $ref: '#/definitions/DIPS.OpenEhr.AssumedTypes.Interval[System.Int32]'
       nodeId:
         type: string
       parent:
-        $ref: '#/definitions/CAttribute'
-  ArchetypeOntology:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute'
+  DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeOntology:
     type: object
     properties:
       terminologyDefinitions:
@@ -1947,25 +2896,25 @@ definitions:
         additionalProperties:
           type: array
           items:
-            $ref: '#/definitions/ArchetypeTerminology'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology'
       terminologyBindings:
         type: object
         additionalProperties:
           type: object
           additionalProperties:
-            $ref: '#/definitions/DvCodePhrase'
+            $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       constraintDefinitions:
         type: object
         additionalProperties:
           type: array
           items:
-            $ref: '#/definitions/ArchetypeTerminology'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology'
       constraintBindings:
         type: object
         additionalProperties:
           type: array
           items:
-            $ref: '#/definitions/ArchetypeTerminology'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology'
       availableTerminologies:
         type: array
         items:
@@ -1989,35 +2938,36 @@ definitions:
           type: string
         readOnly: true
       parentArchetype:
-        $ref: '#/definitions/Archetype'
-  Assertion:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Archetypes.Archetype'
+  DIPS.OpenEhr.AM.Aom.Assertions.Assertion:
     type: object
     properties:
       tag:
         type: string
       expression:
-        $ref: '#/definitions/ExprItem'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Assertions.ExprItem'
       expressionString:
         type: string
       variables:
         type: array
         items:
-          $ref: '#/definitions/AssertionVariable'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Assertions.AssertionVariable'
         readOnly: true
-  DvCodePhrase:
+  DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase:
     type: object
     properties:
       codeString:
         type: string
       terminologyId:
-        $ref: '#/definitions/TerminologyId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.TerminologyId
       constraint:
-        $ref: '#/definitions/CObject'
-  TranslationDetails:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ResourcePackage.TranslationDetails:
     type: object
     properties:
       language:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       author:
         type: object
         additionalProperties:
@@ -2031,8 +2981,8 @@ definitions:
           type: string
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  ResourceDescription:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ResourcePackage.ResourceDescription:
     type: object
     properties:
       originalAuthor:
@@ -2050,7 +3000,8 @@ definitions:
       details:
         type: array
         items:
-          $ref: '#/definitions/ResourceDescriptionItem'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.ResourceDescriptionItem
         readOnly: true
       resourcePackageUri:
         type: string
@@ -2060,46 +3011,47 @@ definitions:
           type: string
         readOnly: true
       parentResource:
-        $ref: '#/definitions/AuthoredResource'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.AuthoredResource'
       constraint:
-        $ref: '#/definitions/CObject'
-  RevisionHistory:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.GenericPackage.RevisionHistory:
     type: object
     properties:
       items:
         type: array
         items:
-          $ref: '#/definitions/RevisionHistoryItem'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.RevisionHistoryItem
       constraint:
-        $ref: '#/definitions/CObject'
-  CObject:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject:
     type: object
     properties:
       referenceModelTypeName:
         type: string
       occurrences:
-        $ref: '#/definitions/Interval[Int32]'
+        $ref: '#/definitions/DIPS.OpenEhr.AssumedTypes.Interval[System.Int32]'
       nodeId:
         type: string
       parent:
-        $ref: '#/definitions/CAttribute'
-  CAttribute:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute'
+  DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute:
     type: object
     properties:
       referenceModelAttributeName:
         type: string
       existence:
-        $ref: '#/definitions/Interval[Int32]'
+        $ref: '#/definitions/DIPS.OpenEhr.AssumedTypes.Interval[System.Int32]'
       isMatchNegated:
         type: boolean
       children:
         type: array
         items:
-          $ref: '#/definitions/CObject'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
         readOnly: true
       parent:
-        $ref: '#/definitions/CObject'
-  'Interval[Int32]':
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  'DIPS.OpenEhr.AssumedTypes.Interval[System.Int32]':
     type: object
     properties:
       lower:
@@ -2116,7 +3068,7 @@ definitions:
         type: boolean
       upperIncluded:
         type: boolean
-  ArchetypeTerminology:
+  DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology:
     type: object
     properties:
       code:
@@ -2126,30 +3078,30 @@ definitions:
         additionalProperties:
           type: string
         readOnly: true
-  ExprItem:
+  DIPS.OpenEhr.AM.Aom.Assertions.ExprItem:
     type: object
     properties:
       type:
         type: string
-  AssertionVariable:
+  DIPS.OpenEhr.AM.Aom.Assertions.AssertionVariable:
     type: object
     properties:
       name:
         type: string
       definition:
         type: string
-  TerminologyId:
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.TerminologyId:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  ResourceDescriptionItem:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ResourcePackage.ResourceDescriptionItem:
     type: object
     properties:
       language:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       purpose:
         type: string
       keywords:
@@ -2173,65 +3125,68 @@ definitions:
           type: string
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  AuthoredResource:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ResourcePackage.AuthoredResource:
     type: object
     properties:
       originalLanguage:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       translations:
         type: object
         additionalProperties:
-          $ref: '#/definitions/TranslationDetails'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.TranslationDetails
       description:
-        $ref: '#/definitions/ResourceDescription'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.ResourceDescription
       revisionHistory:
-        $ref: '#/definitions/RevisionHistory'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.RevisionHistory'
       isControlled:
         type: boolean
       constraint:
-        $ref: '#/definitions/CObject'
-  RevisionHistoryItem:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.GenericPackage.RevisionHistoryItem:
     type: object
     properties:
       audits:
         type: array
         items:
-          $ref: '#/definitions/AuditDetails'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.AuditDetails'
       versionId:
-        $ref: '#/definitions/ObjectVersionId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ObjectVersionId
       constraint:
-        $ref: '#/definitions/CObject'
-  AuditDetails:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.GenericPackage.AuditDetails:
     type: object
     properties:
       systemId:
         type: string
       committer:
-        $ref: '#/definitions/PartyProxy'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartyProxy'
       timeCommitted:
-        $ref: '#/definitions/DvDateTime'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime'
       changeType:
-        $ref: '#/definitions/DvCodedText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodedText'
       description:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       constraint:
-        $ref: '#/definitions/CObject'
-  ObjectVersionId:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.ObjectVersionId:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  PartyProxy:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.GenericPackage.PartyProxy:
     type: object
     properties:
       externalRef:
-        $ref: '#/definitions/PartyRef'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.PartyRef'
       constraint:
-        $ref: '#/definitions/CObject'
-  DvDateTime:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime:
     type: object
     properties:
       value:
@@ -2244,41 +3199,44 @@ definitions:
         type: string
         readOnly: true
       accuracy:
-        $ref: '#/definitions/DvDuration'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration'
       magnitudeStatus:
         type: string
       normalStatus:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       normalRange:
-        $ref: '#/definitions/DvInterval[DvDateTime]'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataTypes.QuantityPackage.DvInterval[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime]
       otherReferenceRanges:
         type: array
         items:
-          $ref: '#/definitions/ReferenceRange[DvDateTime]'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.DataTypes.QuantityPackage.ReferenceRange[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime]
       constraint:
-        $ref: '#/definitions/CObject'
-  DvCodedText:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodedText:
     type: object
     properties:
       definingCode:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       value:
         type: string
       mappings:
         type: array
         items:
-          $ref: '#/definitions/TerminologyMapping'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.TerminologyMapping
       formatting:
         type: string
       hyperlink:
-        $ref: '#/definitions/DvUri'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.UriPackage.DvUri'
       language:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       encoding:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       constraint:
-        $ref: '#/definitions/CObject'
-  DvText:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText:
     type: object
     properties:
       value:
@@ -2286,29 +3244,30 @@ definitions:
       mappings:
         type: array
         items:
-          $ref: '#/definitions/TerminologyMapping'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.TerminologyMapping
       formatting:
         type: string
       hyperlink:
-        $ref: '#/definitions/DvUri'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.UriPackage.DvUri'
       language:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       encoding:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       constraint:
-        $ref: '#/definitions/CObject'
-  PartyRef:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.PartyRef:
     type: object
     properties:
       type:
         type: string
       id:
-        $ref: '#/definitions/ObjectId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ObjectId'
       namespace:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  DvDuration:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration:
     type: object
     properties:
       value:
@@ -2324,22 +3283,24 @@ definitions:
       magnitudeStatus:
         type: string
       normalStatus:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       normalRange:
-        $ref: '#/definitions/DvInterval[DvDuration]'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataTypes.QuantityPackage.DvInterval[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration]
       otherReferenceRanges:
         type: array
         items:
-          $ref: '#/definitions/ReferenceRange[DvDuration]'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.DataTypes.QuantityPackage.ReferenceRange[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration]
       constraint:
-        $ref: '#/definitions/CObject'
-  'DvInterval[DvDateTime]':
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  'DIPS.OpenEhr.RM.DataTypes.QuantityPackage.DvInterval[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime]':
     type: object
     properties:
       lower:
-        $ref: '#/definitions/DvDateTime'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime'
       upper:
-        $ref: '#/definitions/DvDateTime'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime'
       isLowerUnbounded:
         type: boolean
         readOnly: true
@@ -2351,21 +3312,22 @@ definitions:
       isUpperIncluded:
         type: boolean
       constraint:
-        $ref: '#/definitions/CObject'
-  'ReferenceRange[DvDateTime]':
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  'DIPS.OpenEhr.RM.DataTypes.QuantityPackage.ReferenceRange[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime]':
     type: object
     properties:
       meaning:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       range:
-        $ref: '#/definitions/DvInterval[DvDateTime]'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataTypes.QuantityPackage.DvInterval[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime]
       constraint:
-        $ref: '#/definitions/CObject'
-  TerminologyMapping:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.TextPackage.TerminologyMapping:
     type: object
     properties:
       target:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       match:
         format: int32
         enum:
@@ -2375,30 +3337,30 @@ definitions:
           - 3
         type: integer
       purpose:
-        $ref: '#/definitions/DvCodedText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodedText'
       constraint:
-        $ref: '#/definitions/CObject'
-  DvUri:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.UriPackage.DvUri:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  ObjectId:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.ObjectId:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  'DvInterval[DvDuration]':
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  'DIPS.OpenEhr.RM.DataTypes.QuantityPackage.DvInterval[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration]':
     type: object
     properties:
       lower:
-        $ref: '#/definitions/DvDuration'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration'
       upper:
-        $ref: '#/definitions/DvDuration'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration'
       isLowerUnbounded:
         type: boolean
         readOnly: true
@@ -2410,192 +3372,379 @@ definitions:
       isUpperIncluded:
         type: boolean
       constraint:
-        $ref: '#/definitions/CObject'
-  'ReferenceRange[DvDuration]':
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  'DIPS.OpenEhr.RM.DataTypes.QuantityPackage.ReferenceRange[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration]':
     type: object
     properties:
       meaning:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       range:
-        $ref: '#/definitions/DvInterval[DvDuration]'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataTypes.QuantityPackage.DvInterval[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDuration]
       constraint:
-        $ref: '#/definitions/CObject'
-  ScopedGdlRequest:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.Arena.Ehr.Knowledge.Vaqm.Api.Rest.ChartQueryArgs:
     type: object
     properties:
-      guideId:
+      scope:
         type: string
-      ehrIds:
+      scopeValues:
+        type: string
+      min:
+        type: string
+      max:
+        type: string
+  DIPS.Unify.Format.Charts.Chart:
+    type: object
+    properties:
+      title:
+        type: string
+      dataSeries:
         type: array
         items:
-          type: string
-      tagScope:
-        $ref: '#/definitions/TagScope'
-      partitionBy:
-        $ref: '#/definitions/TagPartitionBy'
-  TagScope:
+          $ref: '#/definitions/DIPS.Unify.Format.Charts.DataSeries'
+      showLegend:
+        type: boolean
+  DIPS.Unify.Format.Charts.DataSeries:
     type: object
     properties:
-      tags:
+      dataPoints:
         type: array
         items:
-          $ref: '#/definitions/TagValues'
-  TagPartitionBy:
+          $ref: '#/definitions/DIPS.Unify.Format.Charts.DataPoint'
+      seriesName:
+        type: string
+      seriesType:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+        type: integer
+      argumentType:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+        type: integer
+      valueType:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+        type: integer
+      showLabel:
+        type: boolean
+  DIPS.Unify.Format.Charts.DataPoint:
     type: object
     properties:
-      tag:
+      x:
+        $ref: '#/definitions/System.Object'
+      'y':
+        $ref: '#/definitions/System.Object'
+      labelText:
         type: string
-      limit:
+      tooltipText:
+        type: string
+  DIPS.Arena.Ehr.Knowledge.Vaqm.Data.Chart.ChartDescription:
+    type: object
+    properties:
+      chartId:
+        type: string
+      providerId:
+        type: string
+      title:
+        type: string
+      description:
+        type: string
+      supportedScopes:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.Arena.Ehr.Knowledge.Vaqm.Data.Chart.Scope'
+      rangeScope:
+        $ref: '#/definitions/DIPS.Arena.Ehr.Knowledge.Vaqm.Data.Chart.RangeScope'
+  DIPS.Arena.Ehr.Knowledge.Vaqm.Data.Chart.Scope:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+        type: integer
+  DIPS.Arena.Ehr.Knowledge.Vaqm.Data.Chart.RangeScope:
+    type: object
+    properties:
+      minRequired:
+        type: boolean
+      maxRequired:
+        type: boolean
+      type:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+        type: integer
+  DIPS.OpenEhr.Vaqm.Chart.VaqmChartConfigurationVersion:
+    type: object
+    properties:
+      id:
+        type: string
+      showLegend:
+        type: boolean
+      version:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Chart.Version'
+      title:
+        type: string
+      approved:
+        type: boolean
+      description:
+        type: string
+      created:
+        format: date-time
+        type: string
+      deleted:
+        type: string
+      dataSeries:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Chart.DataElementSeries'
+      supportedScopes:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Chart.VaqmScope'
+      intervalType:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+        type: integer
+      supportsInterval:
+        type: boolean
+  DIPS.OpenEhr.Vaqm.Chart.Version:
+    type: object
+    properties:
+      major:
         format: int32
         type: integer
-  TagValues:
+      minor:
+        format: int32
+        type: integer
+      patch:
+        format: int32
+        type: integer
+  DIPS.OpenEhr.Vaqm.Chart.DataElementSeries:
     type: object
     properties:
-      values:
-        type: array
-        items:
-          type: string
-      tag:
+      type:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+        type: integer
+      seriesName:
         type: string
-  Composition:
+      showLabel:
+        type: boolean
+      dataElementReference:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Chart.DataElementReference'
+  DIPS.OpenEhr.Vaqm.Chart.VaqmScope:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+        type: integer
+  DIPS.OpenEhr.Vaqm.Chart.DataElementReference:
+    type: object
+    properties:
+      guid:
+        type: string
+      version:
+        type: string
+      xFormatDataType:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+        type: integer
+      yFormatDataType:
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+        type: integer
+  DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.Composition:
     type: object
     properties:
       content:
         type: array
         items:
-          $ref: '#/definitions/ContentItem'
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.ContentPackage.ContentItem
       context:
-        $ref: '#/definitions/EventContext'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.EventContext
       composer:
-        $ref: '#/definitions/PartyProxy'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartyProxy'
       category:
-        $ref: '#/definitions/DvCodedText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodedText'
       language:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       territory:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       archetypeDetails:
-        $ref: '#/definitions/Archetyped'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Archetyped'
       archetypeNodeId:
         type: string
       feederAudit:
-        $ref: '#/definitions/FeederAudit'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAudit'
       links:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Link'
       name:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       uid:
-        $ref: '#/definitions/UIdBasedId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.UIdBasedId'
       parent:
-        $ref: '#/definitions/Pathable'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable'
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  ContentItem:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.ContentPackage.ContentItem:
     type: object
     properties:
       archetypeDetails:
-        $ref: '#/definitions/Archetyped'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Archetyped'
       archetypeNodeId:
         type: string
       feederAudit:
-        $ref: '#/definitions/FeederAudit'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAudit'
       links:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Link'
       name:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       uid:
-        $ref: '#/definitions/UIdBasedId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.UIdBasedId'
       parent:
-        $ref: '#/definitions/Pathable'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable'
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  EventContext:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Domain.Compositions.CompositionPackage.EventContext:
     type: object
     properties:
       healtCareFacility:
-        $ref: '#/definitions/PartyIdentified'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartyIdentified'
       startTime:
-        $ref: '#/definitions/DvDateTime'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime'
       endTime:
-        $ref: '#/definitions/DvDateTime'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime'
       participations:
         type: array
         items:
-          $ref: '#/definitions/Participation'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.Participation'
       location:
         type: string
       setting:
-        $ref: '#/definitions/DvCodedText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodedText'
       otherContext:
-        $ref: '#/definitions/ItemStructure'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataStructures.ItemStructurePackage.ItemStructure
       parent:
-        $ref: '#/definitions/Pathable'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable'
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  Archetyped:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ArchetypedPackage.Archetyped:
     type: object
     properties:
       archetypeId:
-        $ref: '#/definitions/ArchetypeId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ArchetypeId
       templateId:
-        $ref: '#/definitions/TemplateId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.TemplateId'
       version:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  FeederAudit:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAudit:
     type: object
     properties:
       originatingSystemAudit:
-        $ref: '#/definitions/FeederAuditDetails'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAuditDetails
       originatingSystemItemIds:
         type: array
         items:
-          $ref: '#/definitions/DvIdentifier'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.BasicPackage.DvIdentifier'
       feederSystemAudit:
-        $ref: '#/definitions/FeederAuditDetails'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAuditDetails
       feederSystemIds:
         type: array
         items:
-          $ref: '#/definitions/DvIdentifier'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.BasicPackage.DvIdentifier'
       originalContent:
-        $ref: '#/definitions/DvEncapsulated'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataTypes.EncapsulatedPackage.DvEncapsulated
       constraint:
-        $ref: '#/definitions/CObject'
-  Link:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ArchetypedPackage.Link:
     type: object
     properties:
       meaning:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       meaningType:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       target:
-        $ref: '#/definitions/DvEhrUri'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.UriPackage.DvEhrUri'
       constraint:
-        $ref: '#/definitions/CObject'
-  UIdBasedId:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.UIdBasedId:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  Pathable:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable:
     type: object
     properties:
       parent:
-        $ref: '#/definitions/Pathable'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable'
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  PartyIdentified:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.GenericPackage.PartyIdentified:
     type: object
     properties:
       name:
@@ -2603,71 +3752,72 @@ definitions:
       identifiers:
         type: array
         items:
-          $ref: '#/definitions/DvIdentifier'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.BasicPackage.DvIdentifier'
       externalRef:
-        $ref: '#/definitions/PartyRef'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.PartyRef'
       constraint:
-        $ref: '#/definitions/CObject'
-  Participation:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.GenericPackage.Participation:
     type: object
     properties:
       performer:
-        $ref: '#/definitions/PartyProxy'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartyProxy'
       function:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       mode:
-        $ref: '#/definitions/DvCodedText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodedText'
       time:
-        $ref: '#/definitions/DvInterval[DvDateTime]'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataTypes.QuantityPackage.DvInterval[DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime]
       constraint:
-        $ref: '#/definitions/CObject'
-  ItemStructure:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataStructures.ItemStructurePackage.ItemStructure:
     type: object
     properties:
       archetypeDetails:
-        $ref: '#/definitions/Archetyped'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Archetyped'
       archetypeNodeId:
         type: string
       feederAudit:
-        $ref: '#/definitions/FeederAudit'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAudit'
       links:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Link'
       name:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       uid:
-        $ref: '#/definitions/UIdBasedId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.UIdBasedId'
       parent:
-        $ref: '#/definitions/Pathable'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable'
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  TemplateId:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.TemplateId:
     type: object
     properties:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  FeederAuditDetails:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAuditDetails:
     type: object
     properties:
       systemId:
         type: string
       provider:
-        $ref: '#/definitions/PartyIdentified'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartyIdentified'
       location:
-        $ref: '#/definitions/PartyIdentified'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartyIdentified'
       time:
-        $ref: '#/definitions/DvDateTime'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime'
       subject:
-        $ref: '#/definitions/PartyProxy'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartyProxy'
       versionId:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  DvIdentifier:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.BasicPackage.DvIdentifier:
     type: object
     properties:
       issuer:
@@ -2679,20 +3829,20 @@ definitions:
       type:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  DvEncapsulated:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.EncapsulatedPackage.DvEncapsulated:
     type: object
     properties:
       charset:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       language:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       size:
         format: int32
         type: integer
       constraint:
-        $ref: '#/definitions/CObject'
-  DvEhrUri:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.DataTypes.UriPackage.DvEhrUri:
     type: object
     properties:
       ehrUriType:
@@ -2710,58 +3860,61 @@ definitions:
       value:
         type: string
       constraint:
-        $ref: '#/definitions/CObject'
-  PatientEhr:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Domain.Ehr.EhrPackage.PatientEhr:
     type: object
     properties:
       ehrId:
-        $ref: '#/definitions/HierObjectId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.HierObjectId
       systemId:
-        $ref: '#/definitions/HierObjectId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.HierObjectId
       timeCreated:
-        $ref: '#/definitions/DvDateTime'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.DateTimePackage.DvDateTime'
       ehrStatus:
-        $ref: '#/definitions/EhrStatus'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Domain.Ehr.EhrPackage.EhrStatus'
       constraint:
-        $ref: '#/definitions/CObject'
-  EhrStatus:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Domain.Ehr.EhrPackage.EhrStatus:
     type: object
     properties:
       subject:
-        $ref: '#/definitions/PartySelf'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.PartySelf'
       isQueryable:
         type: boolean
       isModifiable:
         type: boolean
       otherDetails:
-        $ref: '#/definitions/ItemStructure'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.DataStructures.ItemStructurePackage.ItemStructure
       archetypeDetails:
-        $ref: '#/definitions/Archetyped'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Archetyped'
       archetypeNodeId:
         type: string
       feederAudit:
-        $ref: '#/definitions/FeederAudit'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAudit'
       links:
         type: array
         items:
-          $ref: '#/definitions/Link'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Link'
       name:
-        $ref: '#/definitions/DvText'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
       uid:
-        $ref: '#/definitions/UIdBasedId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.UIdBasedId'
       parent:
-        $ref: '#/definitions/Pathable'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable'
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  PartySelf:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Common.GenericPackage.PartySelf:
     type: object
     properties:
       externalRef:
-        $ref: '#/definitions/PartyRef'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.PartyRef'
       constraint:
-        $ref: '#/definitions/CObject'
-  CreateEhrRequest:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.Arena.Ehr.Datastore.Api.Internal.Ehrs.CreateEhrRequest:
     type: object
     properties:
       subjectId:
@@ -2770,33 +3923,75 @@ definitions:
         type: string
       committerName:
         type: string
-  ServerFormInfo:
+  DIPS.OpenEhr.RM.Common.DirectoryPackage.Folder:
     type: object
     properties:
-      templateId:
+      folders:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.DirectoryPackage.Folder'
+      items:
+        type: array
+        items:
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ObjectRef
+      archetypeDetails:
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Archetyped'
+      archetypeNodeId:
         type: string
+      feederAudit:
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.FeederAudit'
+      links:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Link'
+      name:
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvText'
+      uid:
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.UIdBasedId'
+      parent:
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ArchetypedPackage.Pathable'
+        readOnly: true
+      constraint:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.RM.Support.IdentificationPackage.ObjectRef:
+    type: object
+    properties:
+      id:
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ObjectId'
+      namespace:
+        type: string
+      type:
+        type: string
+      constraint:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.Arena.Ehr.Knowledge.Folder.Data.ServerFolderTemplateInfo:
+    type: object
+    properties:
       name:
         type: string
       version:
         type: string
-      createdTimestamp:
+      timestamp:
         format: date-time
-        type: string
-      status:
-        type: string
-      category:
         type: string
       creator:
         type: string
-      type:
-        type: string
       schemaVersion:
+        type: string
+      defaultLanguage:
         type: string
       resources:
         type: array
         items:
-          $ref: '#/definitions/ServerResourceInfo'
-  ServerResourceInfo:
+          $ref: >-
+            #/definitions/DIPS.Arena.Ehr.Knowledge.Folder.Data.ServerFolderTemplateResourceInfo
+      deleted:
+        format: date-time
+        type: string
+      deletedBy:
+        type: string
+  DIPS.Arena.Ehr.Knowledge.Folder.Data.ServerFolderTemplateResourceInfo:
     type: object
     properties:
       name:
@@ -2807,33 +4002,27 @@ definitions:
         type: string
       href:
         type: string
-  Form:
+  DIPS.OpenEhr.Forms.Format.Folder.FolderResources:
     type: object
     properties:
-      templateId:
-        type: string
-      name:
-        type: string
-      version:
-        type: string
-      createdTimestamp:
+      timestamp:
         format: date-time
-        type: string
-      status:
-        type: string
-      category:
         type: string
       creator:
         type: string
-      type:
+      defaultLanguage:
+        type: string
+      name:
         type: string
       schemaVersion:
+        type: string
+      version:
         type: string
       resources:
         type: array
         items:
-          $ref: '#/definitions/Resource'
-  Resource:
+          $ref: '#/definitions/DIPS.OpenEhr.Forms.Format.Folder.Resource'
+  DIPS.OpenEhr.Forms.Format.Folder.Resource:
     type: object
     properties:
       name:
@@ -2846,17 +4035,130 @@ definitions:
         type: string
       content:
         type: string
-  Command:
+  DIPS.Arena.Ehr.Knowledge.Forms.Data.ServerFormInfo:
+    type: object
+    properties:
+      templateId:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      createdTimestamp:
+        format: date-time
+        type: string
+      status:
+        type: string
+      category:
+        type: string
+      creator:
+        type: string
+      type:
+        type: string
+      schemaVersion:
+        type: string
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.Arena.Ehr.Knowledge.Data.Forms.ServerResourceInfo'
+  DIPS.Arena.Ehr.Knowledge.Data.Forms.ServerResourceInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      mimetype:
+        type: string
+      type:
+        type: string
+      href:
+        type: string
+  DIPS.OpenEhr.Forms.IO.Form:
+    type: object
+    properties:
+      templateId:
+        type: string
+      name:
+        type: string
+      version:
+        type: string
+      createdTimestamp:
+        format: date-time
+        type: string
+      status:
+        type: string
+      category:
+        type: string
+      creator:
+        type: string
+      type:
+        type: string
+      schemaVersion:
+        type: string
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Forms.IO.Resource'
+  DIPS.OpenEhr.Forms.IO.Resource:
+    type: object
+    properties:
+      name:
+        type: string
+      mimetype:
+        type: string
+      type:
+        type: string
+      href:
+        type: string
+      content:
+        type: string
+  DIPS.Arena.Ehr.Gdl.Api.Internal.Gdl.StoreGuide.Command:
     type: object
     properties:
       gdl:
         type: string
-  RmType:
+  DIPS.Arena.Ehr.Gdl.Api.Rest.ScopedGdlRequest:
+    type: object
+    properties:
+      guideId:
+        type: string
+      ehrIds:
+        type: array
+        items:
+          type: string
+      tagScope:
+        $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagScope'
+      partitionBy:
+        $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagPartitionBy'
+  DIPS.OpenEhr.Aql.Pipeline.Queries.TagScope:
+    type: object
+    properties:
+      tags:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagValues'
+  DIPS.OpenEhr.Aql.Pipeline.Queries.TagPartitionBy:
+    type: object
+    properties:
+      tag:
+        type: string
+      limit:
+        format: int32
+        type: integer
+  DIPS.OpenEhr.Aql.Pipeline.Queries.TagValues:
+    type: object
+    properties:
+      values:
+        type: array
+        items:
+          type: string
+      tag:
+        type: string
+  DIPS.OpenEhr.RM.Common.RmType:
     type: object
     properties:
       constraint:
-        $ref: '#/definitions/CObject'
-  ResultSet:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.ResultSets.ResultSet:
     type: object
     properties:
       name:
@@ -2867,38 +4169,38 @@ definitions:
       columns:
         type: array
         items:
-          $ref: '#/definitions/ColumnDef'
+          $ref: '#/definitions/DIPS.OpenEhr.ResultSets.ColumnDef'
       rows:
         type: array
         items:
-          $ref: '#/definitions/Row'
+          $ref: '#/definitions/DIPS.OpenEhr.ResultSets.Row'
       tags:
         type: array
         items:
-          $ref: '#/definitions/Tag'
+          $ref: '#/definitions/DIPS.OpenEhr.ResultSets.Tag'
       correlationId:
         type: string
-  ColumnDef:
+  DIPS.OpenEhr.ResultSets.ColumnDef:
     type: object
     properties:
       path:
         type: string
       name:
         type: string
-  Row:
+  DIPS.OpenEhr.ResultSets.Row:
     type: object
     properties:
       items:
         type: array
         items:
-          $ref: '#/definitions/Object'
+          $ref: '#/definitions/System.Object'
       ehrId:
         type: string
       subjectId:
         type: string
       subjectNamespace:
         type: string
-  Tag:
+  DIPS.OpenEhr.ResultSets.Tag:
     type: object
     properties:
       row:
@@ -2911,7 +4213,7 @@ definitions:
         type: string
       value:
         type: string
-  ScopedQueryMessage:
+  DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedQueryMessage:
     type: object
     properties:
       aql:
@@ -2925,41 +4227,26 @@ definitions:
         items:
           type: string
       tagScope:
-        $ref: '#/definitions/TagScope'
+        $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagScope'
       partitionBy:
-        $ref: '#/definitions/TagPartitionBy'
+        $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagPartitionBy'
       correlationId:
         type: string
-  ScopedStoredQueryMessage:
-    type: object
-    properties:
-      compositionUids:
-        type: array
-        items:
-          type: string
-      ehrIds:
-        type: array
-        items:
-          type: string
-      tagScope:
-        $ref: '#/definitions/TagScope'
-      partitionBy:
-        $ref: '#/definitions/TagPartitionBy'
-  AqlValidationRequest:
+  DIPS.Arena.Ehr.Datastore.Api.Internal.Queries.AqlValidationRequest:
     type: object
     properties:
       aql:
         type: string
-  ValidationResult:
+  DIPS.OpenEhr.Aql.ValidationResult:
     type: object
     properties:
       errors:
         type: array
         items:
-          $ref: '#/definitions/ValidationError'
+          $ref: '#/definitions/DIPS.OpenEhr.Aql.ValidationError'
       hasErrors:
         type: boolean
-  ValidationError:
+  DIPS.OpenEhr.Aql.ValidationError:
     type: object
     properties:
       startIndex:
@@ -2976,262 +4263,7 @@ definitions:
         type: integer
       message:
         type: string
-  AqlAutocompleteRequest:
-    type: object
-    properties:
-      aql:
-        type: string
-      row:
-        format: int32
-        type: integer
-      column:
-        format: int32
-        type: integer
-  DataElementQuery:
-    type: object
-    properties:
-      bindings:
-        type: array
-        items:
-          $ref: '#/definitions/AqlBinding'
-      dataElementParameters:
-        type: array
-        items:
-          $ref: '#/definitions/DataElementParameter'
-  AqlBinding:
-    type: object
-    properties:
-      id:
-        type: string
-      oid:
-        type: string
-      version:
-        type: string
-      approved:
-        type: boolean
-      name:
-        type: string
-      defaultArchetypeId:
-        type: string
-      baseAql:
-        type: string
-      paths:
-        type: array
-        items:
-          $ref: '#/definitions/Path'
-      whereExpressions:
-        type: array
-        items:
-          $ref: '#/definitions/WhereExpression'
-      orderByExpressions:
-        type: array
-        items:
-          $ref: '#/definitions/OrderByExpression'
-      predicates:
-        type: array
-        items:
-          $ref: '#/definitions/Predicate'
-      dataElements:
-        type: array
-        items:
-          $ref: '#/definitions/DataElement'
-      deleted:
-        type: string
-      createdByAuthor:
-        type: string
-      created:
-        format: date-time
-        type: string
-      deletedByAuthor:
-        type: string
-      adminDescription:
-        type: string
-      keyValues:
-        type: array
-        items:
-          $ref: '#/definitions/KeyValue'
-      versionComment:
-        type: string
-      basedOnVersion:
-        type: string
-  DataElementParameter:
-    type: object
-    properties:
-      parameters:
-        type: array
-        items:
-          type: string
-      dataElementIds:
-        type: array
-        items:
-          type: string
-  Path:
-    type: object
-    properties:
-      id:
-        type: string
-      identifierRef:
-        type: string
-      value:
-        type: string
-      adminDescription:
-        type: string
-      dataType:
-        type: string
-  WhereExpression:
-    type: object
-    properties:
-      id:
-        type: string
-      path:
-        type: string
-      operator:
-        type: string
-      value:
-        type: string
-      adminDescription:
-        type: string
-  OrderByExpression:
-    type: object
-    properties:
-      id:
-        type: string
-      value:
-        type: string
-      ascending:
-        type: boolean
-      adminDescription:
-        type: string
-  Predicate:
-    type: object
-    properties:
-      id:
-        type: string
-      where:
-        type: string
-      orderBy:
-        type: string
-      adminDescription:
-        type: string
-  DataElement:
-    type: object
-    properties:
-      id:
-        type: string
-      oid:
-        type: string
-      name:
-        type: string
-      adminName:
-        type: string
-      description:
-        type: string
-      categories:
-        type: string
-      predicateRef:
-        type: string
-      displayFormat:
-        type: string
-      sortFormat:
-        type: string
-      queryScope:
-        type: string
-      isEditable:
-        type: boolean
-      adminDescription:
-        type: string
-      customData:
-        $ref: '#/definitions/CustomData'
-      formatExpressions:
-        type: array
-        items:
-          $ref: '#/definitions/FormatExpression'
-      params:
-        type: array
-        items:
-          $ref: '#/definitions/Param'
-      keyValues:
-        type: array
-        items:
-          $ref: '#/definitions/KeyValue'
-  KeyValue:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
-      adminDescription:
-        type: string
-  CustomData:
-    type: object
-    properties:
-      data:
-        $ref: '#/definitions/Object'
-  FormatExpression:
-    type: object
-    properties:
-      whenExpression:
-        $ref: '#/definitions/WhenExpression'
-      alertType:
-        type: string
-      symbol:
-        type: string
-      adminDescription:
-        type: string
-      description:
-        type: string
-  Param:
-    type: object
-    properties:
-      id:
-        type: string
-      defaultValue:
-        type: string
-  WhenExpression:
-    type: object
-    properties:
-      value:
-        type: string
-      adminDescription:
-        type: string
-  DataElementQueryResult:
-    type: object
-    properties:
-      formattedResults:
-        type: array
-        items:
-          $ref: '#/definitions/FormattedValue'
-  FormattedValue:
-    type: object
-    properties:
-      value:
-        type: string
-      key:
-        $ref: '#/definitions/Object'
-      sortFormat:
-        $ref: '#/definitions/SortFormat'
-      dataElementGuid:
-        type: string
-      formatDescriptions:
-        type: array
-        items:
-          $ref: '#/definitions/FormatDescription'
-  SortFormat:
-    type: object
-    properties:
-      value:
-        $ref: '#/definitions/Object'
-      type:
-        type: string
-  FormatDescription:
-    type: object
-    properties:
-      symbol:
-        type: string
-      alertType:
-        type: string
-  StoredQueryModel:
+  DIPS.Arena.Ehr.Knowledge.StoredQueries.Data.StoredQueryModel:
     type: object
     properties:
       id:
@@ -3250,8 +4282,9 @@ definitions:
       formats:
         type: array
         items:
-          $ref: '#/definitions/FormatModel'
-  FormatModel:
+          $ref: >-
+            #/definitions/DIPS.Arena.Ehr.Knowledge.StoredQueries.Data.FormatModel
+  DIPS.Arena.Ehr.Knowledge.StoredQueries.Data.FormatModel:
     type: object
     properties:
       id:
@@ -3261,7 +4294,22 @@ definitions:
         type: string
       value:
         type: string
-  TemplateInfo:
+  DIPS.Arena.Ehr.Datastore.Api.Rest.ScopedStoredQueryMessage:
+    type: object
+    properties:
+      compositionUids:
+        type: array
+        items:
+          type: string
+      ehrIds:
+        type: array
+        items:
+          type: string
+      tagScope:
+        $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagScope'
+      partitionBy:
+        $ref: '#/definitions/DIPS.OpenEhr.Aql.Pipeline.Queries.TagPartitionBy'
+  DIPS.Arena.Ehr.Datastore.Api.Internal.Templates.TemplateInfo:
     type: object
     properties:
       id:
@@ -3281,79 +4329,82 @@ definitions:
       createdTimeStamp:
         format: date-time
         type: string
-  OperationalTemplate:
+  DIPS.OpenEhr.AM.Templates.OperationalTemplate:
     type: object
     properties:
       language:
-        $ref: '#/definitions/DvCodePhrase'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       uid:
-        $ref: '#/definitions/HierObjectId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.HierObjectId
       templateId:
-        $ref: '#/definitions/TemplateId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.TemplateId'
       concept:
         type: string
       definition:
-        $ref: '#/definitions/CArchetypeRoot'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.CArchetypeRoot'
       isControlled:
         type: boolean
       description:
-        $ref: '#/definitions/ResourceDescription'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.ResourceDescription
       revisionHistory:
-        $ref: '#/definitions/RevisionHistory'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Common.GenericPackage.RevisionHistory'
       annotations:
         type: array
         items:
-          $ref: '#/definitions/Annotation'
+          $ref: '#/definitions/DIPS.OpenEhr.RM.Common.ResourcePackage.Annotation'
         readOnly: true
       constraints:
-        $ref: '#/definitions/TConstraint'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.TConstraint'
       view:
-        $ref: '#/definitions/TView'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.TView'
       ontology:
-        $ref: '#/definitions/FlatArchetypeOntology'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.FlatArchetypeOntology'
       componentOntologies:
         type: array
         items:
-          $ref: '#/definitions/FlatArchetypeOntology'
-  CArchetypeRoot:
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.FlatArchetypeOntology'
+  DIPS.OpenEhr.AM.Templates.CArchetypeRoot:
     type: object
     properties:
       archetypeId:
-        $ref: '#/definitions/ArchetypeId'
+        $ref: >-
+          #/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.ArchetypeId
       templateId:
-        $ref: '#/definitions/TemplateId'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.Support.IdentificationPackage.TemplateId'
       terminologyDefinitions:
         type: object
         additionalProperties:
-          $ref: '#/definitions/ArchetypeTerminology'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology'
         readOnly: true
       terminologyBindings:
         type: object
         additionalProperties:
           type: object
           additionalProperties:
-            $ref: '#/definitions/DvCodePhrase'
+            $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
         readOnly: true
       slotNodeId:
         type: string
       attributes:
         type: array
         items:
-          $ref: '#/definitions/CAttribute'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute'
         readOnly: true
       assumedValue:
-        $ref: '#/definitions/CComplexObject'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CComplexObject'
       anyAllowed:
         type: boolean
       referenceModelTypeName:
         type: string
       occurrences:
-        $ref: '#/definitions/Interval[Int32]'
+        $ref: '#/definitions/DIPS.OpenEhr.AssumedTypes.Interval[System.Int32]'
       nodeId:
         type: string
       parent:
-        $ref: '#/definitions/CAttribute'
-  Annotation:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute'
+  DIPS.OpenEhr.RM.Common.ResourcePackage.Annotation:
     type: object
     properties:
       path:
@@ -3364,24 +4415,24 @@ definitions:
           type: string
         readOnly: true
       constraint:
-        $ref: '#/definitions/CObject'
-  TConstraint:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.AM.Templates.TConstraint:
     type: object
     properties:
       attributes:
         type: array
         items:
-          $ref: '#/definitions/TAttribute'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.TAttribute'
         readOnly: true
-  TView:
+  DIPS.OpenEhr.AM.Templates.TView:
     type: object
     properties:
       constraints:
         type: array
         items:
-          $ref: '#/definitions/TViewConstraint'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.TViewConstraint'
         readOnly: true
-  FlatArchetypeOntology:
+  DIPS.OpenEhr.AM.Templates.FlatArchetypeOntology:
     type: object
     properties:
       archetypeId:
@@ -3391,25 +4442,25 @@ definitions:
         additionalProperties:
           type: array
           items:
-            $ref: '#/definitions/ArchetypeTerminology'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology'
       terminologyBindings:
         type: object
         additionalProperties:
           type: object
           additionalProperties:
-            $ref: '#/definitions/DvCodePhrase'
+            $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.TextPackage.DvCodePhrase'
       constraintDefinitions:
         type: object
         additionalProperties:
           type: array
           items:
-            $ref: '#/definitions/ArchetypeTerminology'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology'
       constraintBindings:
         type: object
         additionalProperties:
           type: array
           items:
-            $ref: '#/definitions/ArchetypeTerminology'
+            $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Ontologies.ArchetypeTerminology'
       availableTerminologies:
         type: array
         items:
@@ -3433,8 +4484,8 @@ definitions:
           type: string
         readOnly: true
       parentArchetype:
-        $ref: '#/definitions/Archetype'
-  TAttribute:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.Archetypes.Archetype'
+  DIPS.OpenEhr.AM.Templates.TAttribute:
     type: object
     properties:
       referenceModelAttributeName:
@@ -3444,9 +4495,9 @@ definitions:
       children:
         type: array
         items:
-          $ref: '#/definitions/TComplexObject'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.TComplexObject'
         readOnly: true
-  TViewConstraint:
+  DIPS.OpenEhr.AM.Templates.TViewConstraint:
     type: object
     properties:
       path:
@@ -3456,55 +4507,264 @@ definitions:
         additionalProperties:
           type: string
         readOnly: true
-  TComplexObject:
+  DIPS.OpenEhr.AM.Templates.TComplexObject:
     type: object
     properties:
       defaultValue:
-        $ref: '#/definitions/DataValue'
+        $ref: '#/definitions/DIPS.OpenEhr.RM.DataTypes.BasicPackage.DataValue'
       attributes:
         type: array
         items:
-          $ref: '#/definitions/CAttribute'
+          $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute'
         readOnly: true
       assumedValue:
-        $ref: '#/definitions/CComplexObject'
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CComplexObject'
       anyAllowed:
         type: boolean
       referenceModelTypeName:
         type: string
       occurrences:
-        $ref: '#/definitions/Interval[Int32]'
+        $ref: '#/definitions/DIPS.OpenEhr.AssumedTypes.Interval[System.Int32]'
       nodeId:
         type: string
       parent:
-        $ref: '#/definitions/CAttribute'
-  DataValue:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CAttribute'
+  DIPS.OpenEhr.RM.DataTypes.BasicPackage.DataValue:
     type: object
     properties:
       constraint:
-        $ref: '#/definitions/CObject'
-  VaqmConfiguration:
+        $ref: '#/definitions/DIPS.OpenEhr.AM.Aom.ConstraintModel.CObject'
+  DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration:
     type: object
     properties:
-      bindings:
+      id:
+        type: string
+      oid:
+        type: string
+      name:
+        type: string
+      aqlBindings:
         type: array
         items:
-          $ref: '#/definitions/AqlBinding'
-  DeleteGuidVersion:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.AqlBinding'
+      dataElements:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.DataElement'
+      version:
+        type: string
+      approved:
+        type: boolean
+      deleted:
+        type: string
+      createdByAuthor:
+        type: string
+      created:
+        format: date-time
+        type: string
+      deletedByAuthor:
+        type: string
+      imported:
+        type: boolean
+      versionComment:
+        type: string
+      basedOnVersion:
+        type: string
+      adminDescription:
+        type: string
+      keyValues:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+  DIPS.OpenEhr.Vaqm.Definitions.AqlBinding:
+    type: object
+    properties:
+      id:
+        type: string
+      oid:
+        type: string
+      name:
+        type: string
+      defaultArchetypeId:
+        type: string
+      baseAql:
+        type: string
+      paths:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.Path'
+      whereExpressions:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.WhereExpression'
+      orderByExpressions:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.OrderByExpression'
+      predicates:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.Predicate'
+      adminDescription:
+        type: string
+      keyValues:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+  DIPS.OpenEhr.Vaqm.Definitions.DataElement:
+    type: object
+    properties:
+      id:
+        type: string
+      oid:
+        type: string
+      name:
+        type: string
+      adminName:
+        type: string
+      description:
+        type: string
+      categories:
+        type: string
+      displayFormat:
+        type: string
+      sortFormat:
+        type: string
+      sortFormatDataType:
+        type: string
+      isEditable:
+        type: boolean
+      adminDescription:
+        type: string
+      customData:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.CustomData'
+      formatExpressions:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.FormatExpression'
+      keyValues:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.KeyValue'
+      xFormat:
+        type: string
+      xFormatDataType:
+        type: string
+      yFormat:
+        type: string
+      yFormatDataType:
+        type: string
+      rangeFormat:
+        type: string
+      rangeFormatDataType:
+        type: string
+  DIPS.OpenEhr.Vaqm.Definitions.KeyValue:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+      adminDescription:
+        type: string
+  DIPS.OpenEhr.Vaqm.Definitions.Path:
+    type: object
+    properties:
+      id:
+        type: string
+      identifierRef:
+        type: string
+      value:
+        type: string
+      adminDescription:
+        type: string
+      dataType:
+        type: string
+  DIPS.OpenEhr.Vaqm.Definitions.WhereExpression:
+    type: object
+    properties:
+      id:
+        type: string
+      path:
+        type: string
+      operator:
+        type: string
+      value:
+        type: string
+      adminDescription:
+        type: string
+  DIPS.OpenEhr.Vaqm.Definitions.OrderByExpression:
+    type: object
+    properties:
+      id:
+        type: string
+      value:
+        type: string
+      ascending:
+        type: boolean
+      adminDescription:
+        type: string
+  DIPS.OpenEhr.Vaqm.Definitions.Predicate:
+    type: object
+    properties:
+      id:
+        type: string
+      where:
+        type: string
+      orderBy:
+        type: string
+      adminDescription:
+        type: string
+  DIPS.OpenEhr.Vaqm.Definitions.CustomData:
+    type: object
+    properties:
+      data:
+        $ref: '#/definitions/System.Object'
+  DIPS.OpenEhr.Vaqm.Definitions.FormatExpression:
+    type: object
+    properties:
+      id:
+        type: string
+      whenExpression:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.WhenExpression'
+      alertType:
+        type: string
+      alertTypeForegroundColor:
+        type: string
+      alertTypeBackgroundColor:
+        type: string
+      symbol:
+        type: string
+      symbolType:
+        type: string
+      symbolForegroundColor:
+        type: string
+      adminDescription:
+        type: string
+      description:
+        type: string
+  DIPS.OpenEhr.Vaqm.Definitions.WhenExpression:
+    type: object
+    properties:
+      value:
+        type: string
+      adminDescription:
+        type: string
+  DIPS.OpenEhr.Vaqm.DeleteGuidVersion:
     type: object
     properties:
       guid:
-        $ref: '#/definitions/GuidVersion'
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.GuidVersion'
       deletedByUser:
         type: string
-  GuidVersion:
+  DIPS.OpenEhr.Vaqm.GuidVersion:
     type: object
     properties:
       guid:
         type: string
       version:
         type: string
-  FilterScope:
+  DIPS.OpenEhr.Vaqm.FilterScope:
     type: object
     properties:
       approved:
@@ -3520,15 +4780,194 @@ definitions:
       guidVersions:
         type: array
         items:
-          $ref: '#/definitions/GuidVersion'
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.GuidVersion'
       oidVersions:
         type: array
         items:
-          $ref: '#/definitions/OidVersion'
-  OidVersion:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.OidVersion'
+  DIPS.OpenEhr.Vaqm.OidVersion:
     type: object
     properties:
       oid:
         type: string
       version:
+        type: string
+  DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQuery:
+    type: object
+    properties:
+      vaqmConfigurationQueryPredicates:
+        type: array
+        items:
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQueryPredicate
+      vaqmConfigurationQueryScopes:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQueryScope'
+      partitionByScope:
+        type: boolean
+      partitionLimit:
+        format: int32
+        type: integer
+      useLimit:
+        type: boolean
+      limit:
+        format: int32
+        type: integer
+      setPathAlias:
+        type: boolean
+      vaqmConfigurationQueryCorrelations:
+        type: array
+        items:
+          $ref: >-
+            #/definitions/DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQueryCorrelation
+      vaqmConfigurations:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
+  DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQueryPredicate:
+    type: object
+    properties:
+      vaqmConfigurationQueryPredicateId:
+        type: string
+      vaqmConfigurationVersionId:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.GuidVersion'
+      predicateId:
+        type: string
+      pathIds:
+        type: array
+        items:
+          type: string
+  DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQueryScope:
+    type: object
+    properties:
+      vaqmConfigurationQueryPredicateIds:
+        type: array
+        items:
+          type: string
+      scope:
+        type: string
+      parameters:
+        type: array
+        items:
+          type: string
+  DIPS.OpenEhr.Vaqm.Query.VaqmConfigurationQueryCorrelation:
+    type: object
+    properties:
+      correlationId:
+        type: string
+      vaqmConfigurationQueryPredicateId:
+        type: string
+      scope:
+        type: string
+  DIPS.OpenEhr.Vaqm.Query.DataElementQuery:
+    type: object
+    properties:
+      vaqmConfigurations:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Definitions.VaqmConfiguration'
+      dataElementParameters:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.DataElementParameter'
+      partitionByScope:
+        type: boolean
+      partitionLimit:
+        format: int32
+        type: integer
+  DIPS.OpenEhr.Vaqm.Query.DataElementParameter:
+    type: object
+    properties:
+      scope:
+        type: string
+      parameters:
+        type: array
+        items:
+          type: string
+      dataElementVersionIds:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.GuidVersion'
+      rangePredicate:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.RangePredicate'
+  DIPS.OpenEhr.Vaqm.Query.RangePredicate:
+    type: object
+    properties:
+      minValue:
+        $ref: '#/definitions/System.Object'
+      maxValue:
+        $ref: '#/definitions/System.Object'
+      minValueIncluded:
+        type: boolean
+      maxValueIncluded:
+        type: boolean
+  DIPS.OpenEhr.Vaqm.Query.DataElementQueryResult:
+    type: object
+    properties:
+      formattedResults:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.FormattedValue'
+      formatDescriptions:
+        type: array
+        items:
+          $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.FormatDescription'
+  DIPS.OpenEhr.Vaqm.Query.FormattedValue:
+    type: object
+    properties:
+      value:
+        type: string
+      scope:
+        type: string
+      key:
+        $ref: '#/definitions/System.Object'
+      xFormat:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.ValueFormat'
+      yFormat:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.ValueFormat'
+      errorMessages:
+        type: array
+        items:
+          type: string
+      sortFormat:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.Query.SortFormat'
+      dataElementVersionId:
+        $ref: '#/definitions/DIPS.OpenEhr.Vaqm.GuidVersion'
+      formatDescriptionIds:
+        type: array
+        items:
+          type: string
+  DIPS.OpenEhr.Vaqm.Query.FormatDescription:
+    type: object
+    properties:
+      formatDescriptionId:
+        type: string
+      symbolType:
+        type: string
+      symbol:
+        type: string
+      symbolForegroundColor:
+        type: string
+      alertType:
+        type: string
+      alertTypeForegroundColor:
+        type: string
+      alertTypeBackgroundColor:
+        type: string
+      description:
+        type: string
+  DIPS.OpenEhr.Vaqm.Query.ValueFormat:
+    type: object
+    properties:
+      value:
+        $ref: '#/definitions/System.Object'
+      type:
+        type: string
+  DIPS.OpenEhr.Vaqm.Query.SortFormat:
+    type: object
+    properties:
+      value:
+        $ref: '#/definitions/System.Object'
+      type:
         type: string
