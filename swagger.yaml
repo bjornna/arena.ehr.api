@@ -2213,7 +2213,7 @@ paths:
             $ref: >-
               #/definitions/DIPS.Arena.Ehr.Datastore.Api.Internal.Templates.TemplateInfo
       deprecated: false
-  '/api/v1/template/name/{templateId}':
+  '/api/v1/template/{templateId}':
     get:
       tags:
         - Template
@@ -2305,7 +2305,7 @@ paths:
           schema:
             $ref: '#/definitions/DIPS.OpenEhr.AM.Templates.OperationalTemplate'
       deprecated: false
-  '/api/v1/template/filename/{fileName}':
+  '/api/v1/template/{fileName}':
     post:
       tags:
         - Template
